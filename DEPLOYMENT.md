@@ -1,6 +1,12 @@
 # PadAI Deployment Guide
 
-## Option 1: Railway (Recommended - 5 minutes)
+## Option 1: Google Cloud Run (Recommended)
+
+See docs/CLOUD_RUN.md for a step-by-step guide using Cloud Build, Artifact Registry, and Cloud Run. The Dockerfile builds the frontend and serves it from FastAPI, honors the `$PORT` variable, and seeds `/workspace/.beads` from the repo at build time.
+
+---
+
+## Option 2: Railway (5 minutes)
 
 Railway provides free hosting perfect for PadAI MVP.
 
@@ -32,7 +38,7 @@ Railway provides free hosting perfect for PadAI MVP.
 
 ---
 
-## Option 2: Local Development
+## Option 3: Local Development
 
 ### Prerequisites
 - Node.js 18+
@@ -78,7 +84,7 @@ curl -X POST http://localhost:3000/api/complete \
 
 ---
 
-## Option 3: Docker
+## Option 4: Docker
 
 ### Build and run:
 
@@ -103,7 +109,7 @@ docker-compose up -d
 
 ---
 
-## Option 4: Fly.io
+## Option 5: Fly.io
 
 ```bash
 # Install flyctl
