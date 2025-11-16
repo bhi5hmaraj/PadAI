@@ -180,7 +180,7 @@ MVP is successful if:
 
 **What we built:**
 - **Backend:** FastAPI server (Python) wrapping bd CLI
-  - `beads.py` - Python wrapper for bd CLI operations
+  - `server/beads.py` - Python wrapper for bd CLI operations
   - `main.py` - FastAPI server with 5 HTTP endpoints
   - Endpoints: `/api/status`, `/api/ready`, `/api/tasks`, `/api/claim`, `/api/complete`
   - Uses `bd --no-db` mode for JSONL-only operation
