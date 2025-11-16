@@ -1,0 +1,42 @@
+graph LR
+    subgraph "Startup Profile: Maximum Velocity"
+        direction TB
+        SV[Velocity: ████████░░ 8/10<br/>Ship fast, iterate]
+        SQ[Quality: ████░░░░░░ 4/10<br/>Tests exist, low coverage OK]
+        SC[Coherence: ███░░░░░░░ 3/10<br/>Architectural consistency later]
+        SL[Learning: ██░░░░░░░░ 2/10<br/>Critical paths only]
+        SS[Scope: ████████░░ 8/10<br/>Aggressive deadlines]
+
+        SMetrics[Metrics:<br/>━━━━━<br/>• 50+ tasks/day<br/>• Cycle time <2hr<br/>• Auto-merge if tests pass<br/>• Humans stay sharp on auth/payment]
+
+        style SV fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+        style SQ fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1px
+        style SC fill:#e8f5e9,stroke:#388e3c,stroke-width:1px
+        style SL fill:#fff3e0,stroke:#f57c00,stroke-width:1px
+        style SS fill:#fce4ec,stroke:#c2185b,stroke-width:3px
+        style SMetrics fill:#fff9c4
+    end
+
+    subgraph "Enterprise Profile: Stability & Compliance"
+        direction TB
+        EV[Velocity: █████░░░░░ 5/10<br/>Steady, sustainable]
+        EQ[Quality: ████████░░ 8/10<br/>High coverage, documentation]
+        EC[Coherence: ████████░░ 8/10<br/>Architecture enforced]
+        EL[Learning: ████████░░ 8/10<br/>Comprehensive sampling]
+        ES[Scope: █████░░░░░ 5/10<br/>Quality > deadlines]
+
+        EMetrics[Metrics:<br/>━━━━━<br/>• 10-20 tasks/day<br/>• Cycle time <1 day<br/>• Human approval required<br/>• Understanding >60% before approval]
+
+        style EV fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+        style EQ fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+        style EC fill:#e8f5e9,stroke:#388e3c,stroke-width:3px
+        style EL fill:#fff3e0,stroke:#f57c00,stroke-width:3px
+        style ES fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+        style EMetrics fill:#fff9c4
+    end
+
+    Human[Human Developer<br/>Tunes Profile]
+    Human -->|Startup context| SV
+    Human -->|Enterprise context| EV
+
+    style Human fill:#e0f2f1,stroke:#00796b,stroke-width:2px

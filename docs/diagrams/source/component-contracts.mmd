@@ -1,0 +1,66 @@
+graph TB
+    subgraph "Human Interface"
+        Human[Human Developer]
+        Frontend[Frontend Dashboard<br/>━━━━━<br/>React + React Flow<br/>Real-time visualization]
+        TensDash[Tensegrity Dashboard<br/>━━━━━<br/>Equilibrium monitoring<br/>Force tuning controls]
+    end
+
+    subgraph "PadAI - Coordination Layer"
+        API[REST + WebSocket API<br/>━━━━━<br/>Provides:<br/>• Task claim/submit<br/>• Agent registration<br/>• Event streams<br/>• Observability]
+
+        Coord[Coordination Engine<br/>━━━━━<br/>• Task assignment<br/>• Dependency tracking<br/>• Agent lifecycle<br/>• Event bus]
+    end
+
+    subgraph "Storage Layer"
+        BeadsMCP[beads-mcp<br/>━━━━━<br/>MCP Server<br/>Provides:<br/>• Task CRUD<br/>• Dependency graph<br/>• Status tracking]
+    end
+
+    subgraph "Tensegrity - Governance Layer"
+        TensAPI[Governance API<br/>━━━━━<br/>Provides:<br/>• Submission review<br/>• Invariant config<br/>• Metrics + alerts]
+
+        TensCore[Governance Engine<br/>━━━━━<br/>• Invariant enforcement<br/>• Equilibrium monitoring<br/>• Active learning<br/>• Feedback loops]
+    end
+
+    subgraph "Worker Agents"
+        Agent1[Agent 1<br/>Claude Code]
+        Agent2[Agent 2<br/>Cursor]
+        AgentN[Agent N<br/>...]
+    end
+
+    subgraph "External"
+        CICD[CI/CD<br/>GitHub Actions]
+        VCS[Version Control<br/>GitHub/GitLab]
+    end
+
+    Human -->|observe| Frontend
+    Human -->|steer forces| TensDash
+    Frontend <-->|WS + REST| API
+    TensDash <-->|REST| TensAPI
+
+    Agent1 <-->|HTTP| API
+    Agent2 <-->|HTTP| API
+    AgentN <-->|HTTP| API
+
+    API <-->|Events| Coord
+    Coord <-->|MCP| BeadsMCP
+
+    API -->|Submission events| TensAPI
+    TensAPI -->|Approve/Block| API
+    TensAPI <-->|Checks| TensCore
+
+    TensCore -->|Trigger checks| CICD
+    CICD -->|Results| TensCore
+
+    Coord -->|Merge approved| VCS
+
+    style Human fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style Frontend fill:#e1f5ff,stroke:#1565c0,stroke-width:2px
+    style TensDash fill:#fff4e1,stroke:#ef6c00,stroke-width:2px
+    style API fill:#e1f5ff,stroke:#1565c0,stroke-width:2px
+    style Coord fill:#e1f5ff,stroke:#1565c0,stroke-width:2px
+    style BeadsMCP fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style TensAPI fill:#fff4e1,stroke:#ef6c00,stroke-width:2px
+    style TensCore fill:#fff4e1,stroke:#ef6c00,stroke-width:2px
+    style Agent1 fill:#e3f2fd,stroke:#1976d2
+    style Agent2 fill:#e3f2fd,stroke:#1976d2
+    style AgentN fill:#e3f2fd,stroke:#1976d2

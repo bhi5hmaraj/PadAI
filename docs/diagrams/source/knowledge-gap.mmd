@@ -1,0 +1,45 @@
+graph LR
+    subgraph "Time = T0 (Project Start)"
+        GT0[Ground Truth<br/>Simple codebase<br/>1000 LOC]
+        AI0[AI Representation<br/>Training data<br/>+ context]
+        H0[Human Understanding<br/>Deep knowledge<br/>Built it themselves]
+
+        GT0 -.->|aligned| AI0
+        AI0 -.->|aligned| H0
+        GT0 -.->|aligned| H0
+    end
+
+    subgraph "Time = T1 (After 1 month with agents)"
+        GT1[Ground Truth<br/>Evolved codebase<br/>50,000 LOC<br/>20+ modules]
+        AI1[AI Representation<br/>Recent context<br/>+ patterns learned]
+        H1[Human Understanding<br/>Partial knowledge<br/>Can't keep up]
+
+        GT1 -->|diverging| AI1
+        AI1 -->|diverging| H1
+        GT1 ==>|LARGE GAP| H1
+    end
+
+    subgraph "Without Tensegrity"
+        Risk[🔴 RISK<br/>━━━━━<br/>Human makes decisions<br/>based on outdated model<br/>━━━━━<br/>Invisible tech debt<br/>Bad architecture choices<br/>Can't debug failures]
+    end
+
+    subgraph "With Tensegrity"
+        Solution[✓ SOLUTION<br/>━━━━━<br/>Active learning primitives<br/>keep H synchronized<br/>━━━━━<br/>Prediction challenges<br/>Comprehension sampling<br/>Knowledge gap alerts]
+    end
+
+    GT1 -.-> Risk
+    H1 -.-> Risk
+
+    Solution -.->|reduces gap| H1
+    Solution -.->|maintains alignment| GT1
+
+    style GT0 fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style AI0 fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    style H0 fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+
+    style GT1 fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px
+    style AI1 fill:#bbdefb,stroke:#1565c0,stroke-width:3px
+    style H1 fill:#ffccbc,stroke:#ef6c00,stroke-width:3px
+
+    style Risk fill:#ffebee,stroke:#c62828,stroke-width:3px
+    style Solution fill:#e8f5e9,stroke:#2e7d32,stroke-width:3px

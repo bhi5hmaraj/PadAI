@@ -1,0 +1,55 @@
+graph TB
+    subgraph "Layer 1: PadAI - Coordination Infrastructure"
+        PadAI[PadAI Server<br/>FastAPI + WebSocket]
+        Frontend[Frontend Dashboard<br/>React + React Flow]
+        BeadsMCP[beads-mcp<br/>Task Storage]
+
+        PadAI -->|REST API| Frontend
+        PadAI -->|WebSocket| Frontend
+        PadAI -->|MCP| BeadsMCP
+    end
+
+    subgraph "Layer 2: Tensegrity - Governance Layer"
+        Tensegrity[Tensegrity Engine]
+        InvariantCheck[Invariant Enforcement]
+        EquilibriumMon[Equilibrium Monitoring]
+        LearningPrim[Active Learning Primitives]
+        SteerlngDash[Human Steering Dashboard]
+
+        Tensegrity --> InvariantCheck
+        Tensegrity --> EquilibriumMon
+        Tensegrity --> LearningPrim
+        Tensegrity --> SteerlngDash
+    end
+
+    subgraph "Worker Agents"
+        Agent1[Claude Code]
+        Agent2[Cursor]
+        Agent3[Gemini]
+        AgentN[Other Agents]
+    end
+
+    subgraph "External Systems"
+        CICD[CI/CD Pipeline]
+        GitHub[GitHub/GitLab]
+    end
+
+    Agent1 -->|Register, Claim, Submit| PadAI
+    Agent2 -->|Register, Claim, Submit| PadAI
+    Agent3 -->|Register, Claim, Submit| PadAI
+    AgentN -->|Register, Claim, Submit| PadAI
+
+    PadAI -->|Submission Events| Tensegrity
+    Tensegrity -->|Approve/Block| PadAI
+    Tensegrity -->|Trigger Checks| CICD
+    CICD -->|Results| Tensegrity
+
+    PadAI -->|Merge Approved| GitHub
+
+    Human[Human Developer] -->|Steer Forces| SteerlngDash
+    Human -->|Observe Status| Frontend
+    Human -->|Learning Challenges| LearningPrim
+
+    style PadAI fill:#e1f5ff
+    style Tensegrity fill:#fff4e1
+    style Human fill:#e8f5e9

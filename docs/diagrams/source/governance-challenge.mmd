@@ -1,0 +1,78 @@
+graph TB
+    Challenge[Multi-Dimensional<br/>Governance Challenge]
+
+    subgraph "1. Coordination Governance"
+        C1[Problem:<br/>20 agents, conflicts,<br/>duplicate work]
+        C2[Traditional:<br/>Humans coordinate<br/>manually]
+        C3[PadAI:<br/>Task queue,<br/>dependency tracking,<br/>real-time observability]
+    end
+
+    subgraph "2. Quality Governance"
+        Q1[Problem:<br/>100 submissions/day,<br/>can't review all]
+        Q2[Traditional:<br/>Manual code review<br/>doesn't scale]
+        Q3[Tensegrity:<br/>Automated invariants,<br/>adaptive gates,<br/>fast feedback]
+    end
+
+    subgraph "3. Coherence Governance"
+        CO1[Problem:<br/>Architecture fragments,<br/>coupling explodes]
+        CO2[Traditional:<br/>Architecture board<br/>bottleneck]
+        CO3[Tensegrity:<br/>Real-time coupling metrics,<br/>automated constraints,<br/>contract enforcement]
+    end
+
+    subgraph "4. Learning Governance"
+        L1[Problem:<br/>Human understanding<br/>lags behind code]
+        L2[Traditional:<br/>Documentation<br/>goes stale immediately]
+        L3[Tensegrity:<br/>Active learning primitives,<br/>prediction challenges,<br/>knowledge gap tracking]
+    end
+
+    subgraph "5. Equilibrium Governance"
+        E1[Problem:<br/>Balance velocity,<br/>quality, coherence,<br/>learning for context]
+        E2[Traditional:<br/>Fixed policies<br/>startup = enterprise]
+        E3[Tensegrity:<br/>Tunable force profiles,<br/>adaptive mechanisms,<br/>context-aware]
+    end
+
+    Challenge --> C1
+    Challenge --> Q1
+    Challenge --> CO1
+    Challenge --> L1
+    Challenge --> E1
+
+    C1 --> C2
+    C2 -.->|fails at<br/>agent scale| C2
+    C1 --> C3
+
+    Q1 --> Q2
+    Q2 -.->|fails at<br/>agent scale| Q2
+    Q1 --> Q3
+
+    CO1 --> CO2
+    CO2 -.->|fails at<br/>agent scale| CO2
+    CO1 --> CO3
+
+    L1 --> L2
+    L2 -.->|fails at<br/>agent scale| L2
+    L1 --> L3
+
+    E1 --> E2
+    E2 -.->|fails at<br/>agent scale| E2
+    E1 --> E3
+
+    style Challenge fill:#fff9c4,stroke:#f57f17,stroke-width:3px
+
+    style C1 fill:#ffebee,stroke:#c62828
+    style Q1 fill:#ffebee,stroke:#c62828
+    style CO1 fill:#ffebee,stroke:#c62828
+    style L1 fill:#ffebee,stroke:#c62828
+    style E1 fill:#ffebee,stroke:#c62828
+
+    style C2 fill:#fff3e0,stroke:#ef6c00
+    style Q2 fill:#fff3e0,stroke:#ef6c00
+    style CO2 fill:#fff3e0,stroke:#ef6c00
+    style L2 fill:#fff3e0,stroke:#ef6c00
+    style E2 fill:#fff3e0,stroke:#ef6c00
+
+    style C3 fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style Q3 fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style CO3 fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style L3 fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style E3 fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px

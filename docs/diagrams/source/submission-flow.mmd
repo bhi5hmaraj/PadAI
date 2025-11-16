@@ -1,0 +1,50 @@
+sequenceDiagram
+    participant Agent
+    participant PadAI
+    participant BeadsMCP
+    participant Tensegrity
+    participant CICD
+    participant Human
+
+    Agent->>PadAI: POST /tasks/submit<br/>{task_id, changes, notes}
+    PadAI->>PadAI: Store submission metadata
+    PadAI->>Tensegrity: WebSocket: submission event<br/>{submission_id, task_id, changes}
+
+    rect rgb(255, 248, 225)
+        Note over Tensegrity: Governance Checks
+        Tensegrity->>Tensegrity: Run invariant checks<br/>- Test coverage ≥ threshold?<br/>- API contracts stable?<br/>- Coupling within limits?
+        Tensegrity->>CICD: Trigger automated tests,<br/>static analysis, security scan
+        CICD-->>Tensegrity: Results<br/>(pass/fail + details)
+    end
+
+    alt All checks pass
+        rect rgb(232, 245, 233)
+            Tensegrity->>PadAI: POST /submissions/{id}/approve
+            PadAI->>BeadsMCP: beads_update(task_id, status=completed)
+            BeadsMCP-->>PadAI: ✓ Updated
+            PadAI->>Agent: Notification: ✓ Approved
+            PadAI->>Human: WebSocket: task_completed event
+        end
+    else Violations found
+        rect rgb(255, 235, 238)
+            Tensegrity->>PadAI: POST /submissions/{id}/block<br/>{violations: [...]}
+            PadAI->>Agent: Notification: ✗ Blocked<br/>Specific violations + guidance
+            PadAI->>Human: WebSocket: submission_blocked event<br/>+ violation details
+            Human->>Human: Review edge case,<br/>decide override or let agent fix
+        end
+    end
+
+    opt Human Learning Challenge
+        rect rgb(255, 243, 224)
+            Note over Human,Tensegrity: Active Learning Flow
+            Tensegrity->>Human: Learning challenge:<br/>"Predict impact of this change"
+            Human->>Tensegrity: Prediction: {performance, coupling, failures}
+            Note over Tensegrity: After deployment,<br/>compare prediction to reality
+            Tensegrity->>Human: Feedback: "75% accurate,<br/>missed memory impact"
+        end
+    end
+
+    style Agent fill:#e3f2fd
+    style PadAI fill:#e1f5ff
+    style Tensegrity fill:#fff4e1
+    style Human fill:#e8f5e9

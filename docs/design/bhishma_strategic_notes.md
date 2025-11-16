@@ -18,6 +18,9 @@ This isn't a hypothetical future problem. Early adopters are already hitting thi
 
 There are so many moving parts. The key is to **focus on contracts first, then details fall into place.**
 
+![Component Contracts](../assets/images/component-contracts.png)
+*Component interactions showing clear contract boundaries*
+
 **Main components:**
 - **Human** (for now, one person interacting)
 - **PadAI Server** (coordination infrastructure)
@@ -59,6 +62,9 @@ Traditional process (design docs, RFCs, CI) slows things down for small projects
 
 **Analogy:** Tensegrity structures - held stable by multiple opposing forces, not rigid components.
 
+![Tensegrity Forces](../assets/images/tensegrity-forces.png)
+*Five forces in equilibrium with human tuning controls*
+
 **Forces in play:**
 1. **Velocity Force**: Agents want to ship fast, complete tasks
 2. **Quality Force**: Tests, coverage, correctness requirements
@@ -90,6 +96,9 @@ Traditional process (design docs, RFCs, CI) slows things down for small projects
 **This is the deeper issue that makes agent-scale fundamentally different from human-scale development.**
 
 ### The Knowledge Representation Gap
+
+![Knowledge Gap](../assets/images/knowledge-gap.png)
+*How representations diverge over time without governance*
 
 **Three representations of the system:**
 1. **Ground truth**: The actual code, tests, architecture, running system
@@ -228,6 +237,9 @@ Quality governance exists (CI/CD, test coverage tools). Coherence governance exi
 - Timeline: 12-18 months to mainstream, not 5 years
 
 ## Tensegrity's Governance Capabilities
+
+![Governance Challenge](../assets/images/governance-challenge.png)
+*Multi-dimensional governance: traditional approaches vs Tensegrity solutions*
 
 **Tensegrity provides five categories of governance infrastructure:**
 

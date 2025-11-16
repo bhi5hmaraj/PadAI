@@ -1,0 +1,35 @@
+graph TD
+    Center[Sustainable<br/>Equilibrium]
+
+    Velocity[Velocity Force<br/>━━━━━━━<br/>Agents ship fast<br/>Complete tasks<br/>High throughput]
+    Quality[Quality Force<br/>━━━━━━━<br/>Tests pass<br/>Coverage ≥ threshold<br/>Low bug rate]
+    Coherence[Coherence Force<br/>━━━━━━━<br/>Architecture stable<br/>Low coupling<br/>Contracts honored]
+    Learning[Learning Force<br/>━━━━━━━<br/>Human understanding<br/>Knowledge gaps closed<br/>Predictions accurate]
+    Scope[Scope Force<br/>━━━━━━━<br/>Deadlines<br/>Priorities<br/>Focus]
+
+    Velocity -.->|pushes| Center
+    Quality -.->|pulls| Center
+    Coherence -.->|pulls| Center
+    Learning -.->|pulls| Center
+    Scope -.->|pushes| Center
+
+    Center -.->|constrains| Velocity
+    Center -.->|enables| Quality
+    Center -.->|maintains| Coherence
+    Center -.->|requires| Learning
+    Center -.->|drives| Scope
+
+    Human[Human Developer<br/>Tunes Force Intensity]
+    Human -->|Adjusts| Velocity
+    Human -->|Adjusts| Quality
+    Human -->|Adjusts| Coherence
+    Human -->|Adjusts| Learning
+    Human -->|Adjusts| Scope
+
+    style Center fill:#fff9c4,stroke:#f57f17,stroke-width:3px
+    style Velocity fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style Quality fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style Coherence fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style Learning fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style Scope fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    style Human fill:#e0f2f1,stroke:#00796b,stroke-width:2px

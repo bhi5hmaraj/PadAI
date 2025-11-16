@@ -46,6 +46,9 @@ With AI agents writing code at 10-100x velocity, this breaks down:
 **Why delegation doesn't work:**
 In traditional teams, delegation works because someone's job or reputation is at stake. Engineers take ownership. But AI agents have no skin in the game - they have no consequence for poor decisions, no career impact from tech debt, no pride in craftsmanship. They optimize for completing the task, not long-term system health.
 
+![Knowledge Representation Gap](../assets/images/knowledge-gap.png)
+*Figure 3: How ground truth, AI representation, and human understanding diverge as agents accelerate development*
+
 **The real challenge:** How do we accelerate human learning to keep pace with agent execution? Not to review every line, but to maintain sufficient understanding to make strategic decisions, recognize when something is fundamentally wrong, and guide the system's evolution.
 
 This is not a solved problem. The traditional approaches don't scale:
@@ -123,9 +126,15 @@ Applied to agent-scale development:
 
 **Equilibrium is visible through metrics** - velocity, quality, coupling, cycle time. When these are stable and healthy, the system is in equilibrium. When they degrade, adjust the forces.
 
+![Tensegrity Forces](../assets/images/tensegrity-forces.png)
+*Figure 2: The five forces in equilibrium - velocity, quality, coherence, learning, and scope - with human tuning controls*
+
 ## The Two-Layer Architecture
 
 We separate infrastructure from governance:
+
+![Architecture Overview](../assets/images/architecture-overview.png)
+*Figure 1: PadAI (Layer 1 - Coordination) + Tensegrity (Layer 2 - Governance) with worker agents and external systems*
 
 ### Layer 1: PadAI (Coordination Infrastructure)
 
@@ -198,6 +207,9 @@ Tensegrity sits on top of PadAI and adds the governance layer. It embodies princ
 ## The Contract Boundaries
 
 Clear contracts between layers enable independent evolution and reusability.
+
+![Component Contracts](../assets/images/component-contracts.png)
+*Figure 4: Component interactions and contract boundaries between PadAI, Tensegrity, storage, agents, and external systems*
 
 ### Storage Layer Contract (beads-mcp)
 
@@ -437,6 +449,9 @@ POST /learning/attest
 
 ## Information Flow
 
+![Submission Flow](../assets/images/submission-flow.png)
+*Figure 5: Agent submission flow through Tensegrity governance with automated checks and human learning challenges*
+
 ### Agent Claims Work
 ```
 Agent → PadAI: POST /tasks/claim {agent_id, capabilities}
@@ -611,6 +626,9 @@ Individual failures shouldn't cascade. The system should be resilient to agents 
 
 Different contexts require different equilibrium points. Tensegrity should support multiple profiles.
 
+![Equilibrium Profiles](../assets/images/equilibrium-profiles.png)
+*Figure 6: Startup vs Enterprise equilibrium profiles showing different force intensity settings and target metrics*
+
 ### Startup Profile: Maximum Velocity
 
 **Forces:**
@@ -727,6 +745,9 @@ AI agents will get better at execution. The constraint isn't coding ability anym
 - No infrastructure for balancing velocity vs. quality vs. coherence in real-time
 
 **The governance challenge is multi-dimensional:**
+
+![Governance Challenge](../assets/images/governance-challenge.png)
+*Figure 7: Five dimensions of governance at agent scale showing traditional approaches that fail vs Tensegrity solutions*
 
 1. **Coordination**: How do you prevent 20 agents from conflicting, duplicating work, or breaking each other's changes?
 2. **Quality**: How do you maintain test coverage, correctness, and reliability when submissions arrive 10x faster?
