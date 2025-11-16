@@ -17,6 +17,79 @@ When 10-20 agents work simultaneously on a codebase:
 
 Large-scale systems already solve this - cities, biological organisms, markets, the Linux kernel. They maintain coherence not through central control, but through **local rules that create global stability**. We need the software equivalent.
 
+## The Epistemological Problem
+
+But there's a deeper problem that makes agent-scale development fundamentally different from human-scale development: **the knowledge representation gap**.
+
+When humans write code, they build mental models of the system. When another human joins, they pair program, do code review, ask questions, gradually build their own mental model. There's shared understanding that emerges through collaboration. The team collectively "knows" the codebase.
+
+With AI agents writing code at 10-100x velocity, this breaks down:
+
+**The knowledge exists in three representations:**
+- **Ground truth**: The actual code, tests, architecture, running system
+- **AI representation**: What the agents "know" about the codebase from training data, context windows, previous interactions
+- **Human representation**: What the human actually understands about what's been built
+
+**The problem:** These representations diverge rapidly. Agents generate code faster than humans can build mental models. The human increasingly has to maintain code they don't deeply understand. This is already happening with complex frameworks (React, Rails, Kubernetes) - most developers use them without understanding internals. But with agent-generated code, it's YOUR codebase that you don't understand.
+
+**Why this is dangerous:**
+- Humans can't make good architectural decisions without understanding the system
+- Tech debt accumulates invisibly - you don't know its magnitude because you're relying on AI's assessment
+- When things break in unexpected ways, humans can't debug effectively
+- The human becomes a manager coordinating agents they can't evaluate
+- Unlike frameworks with large communities, your agent-generated codebase has a community of one (you)
+
+**Why delegation doesn't work:**
+In traditional teams, delegation works because someone's job or reputation is at stake. Engineers take ownership. But AI agents have no skin in the game - they have no consequence for poor decisions, no career impact from tech debt, no pride in craftsmanship. They optimize for completing the task, not long-term system health.
+
+**The real challenge:** How do we accelerate human learning to keep pace with agent execution? Not to review every line, but to maintain sufficient understanding to make strategic decisions, recognize when something is fundamentally wrong, and guide the system's evolution.
+
+This is not a solved problem. The traditional approaches don't scale:
+- Code review at 100 PRs/day is impossible
+- Documentation goes stale immediately
+- AI-generated explanations are passive consumption - they create illusion of understanding without actual learning
+- Pairing with agents doesn't work like pairing with humans - you can't learn by watching them code
+
+## Active Learning: The Only Solution
+
+The insight from learning science (per Justin Skycak's work on Math Academy): **Learning requires active retrieval, not passive consumption.**
+
+You don't learn by:
+- Having AI explain the code it wrote
+- Reading documentation
+- Watching agents work
+- Reviewing diffs
+
+You learn by:
+- Making predictions about code behavior BEFORE running it
+- Changing something, predicting what will break, testing the prediction
+- Debugging failures and updating your mental model
+- Retrieving knowledge from memory (not looking it up)
+- Wrestling with the code until you can regenerate it from understanding, not just recognize it
+
+**This is deliberate practice for codebase understanding.** Just like you can't learn tennis by watching videos, you can't learn a codebase by having AI explain it. You need reps. You need to struggle. You need feedback loops that test whether you actually understand.
+
+**The Tensegrity role:** Provide primitives that make active learning the default, not a burden. The system should:
+- Force humans to make predictions before agents execute
+- Create lightweight "code comprehension challenges" that test understanding
+- Track what the human knows vs. what exists in the codebase (the gap is tech debt risk)
+- Surface learning opportunities from agent work (not explanations, but challenges)
+- Make it easy to experiment safely (break things to see what happens)
+- Reward understanding with better steering capability
+
+**Example primitive: Prediction Protocol**
+```
+Agent proposes: "Add caching layer to API endpoints"
+Human predicts: "This will speed up reads, might cause stale data in X scenario, will increase memory usage by ~Y"
+Agent implements
+System shows: Actual impact on latency, memory, where stale data occurred
+Human updates mental model: Prediction was 70% correct, learned about Z edge case
+```
+
+This isn't about slowing down to review everything. It's about strategic sampling that keeps human understanding from falling too far behind. The human doesn't need to understand every detail, but they need to understand the **load-bearing concepts** - the architectural invariants, the critical paths, the areas of tech debt.
+
+**The goal:** Minimize error between human mental model and ground truth on what matters for strategic decisions. Let details be fuzzy, but keep the architecture sharp.
+
 ## The Tensegrity Principle
 
 Our guiding metaphor is **tensegrity** - architectural structures held stable by balanced opposing forces rather than rigid components.
@@ -38,7 +111,7 @@ Applied to agent-scale development:
 
 **Coherence Force** - Architecture must remain consistent. APIs stay stable. Patterns are followed. This force prevents fragmentation.
 
-**Learning Force** - Agents improve from feedback. Patterns are discovered and shared. This force increases capability over time.
+**Learning Force** - Human understanding must keep pace with agent execution. Active learning primitives force comprehension. This force prevents knowledge divergence and invisible tech debt.
 
 **Scope Force** - Deadlines create urgency. Priorities shift. This force drives focus.
 
@@ -95,13 +168,26 @@ Tensegrity sits on top of PadAI and adds the governance layer. It embodies princ
 
 **Feedback Loops** - When submissions fail invariant checks, agents receive specific guidance. Pattern libraries help agents follow established conventions. Over time, agents learn what passes and improve.
 
+**Active Learning Primitives** - Force human comprehension to keep pace with agent execution:
+
+**Prediction Challenges**: Before agents implement changes, humans predict impact (performance, coupling, failure modes). After implementation, system shows actual outcomes. Humans update mental models based on prediction accuracy.
+
+**Comprehension Sampling**: System randomly selects agent-generated code and quizzes human on behavior. Not "explain this" but "what happens if X changes?" Testing actual retrieval from memory, not recognition.
+
+**Experimental Sandbox**: Safe environment to break things. Human changes code, predicts what breaks, runs tests, learns from failures. Like a gym for codebase understanding.
+
+**Knowledge Gap Tracking**: Track which parts of codebase human has actively learned (not just reviewed). Highlight areas where human understanding lags - these are tech debt risk zones.
+
+**Understanding-Gated Steering**: More comprehension = more control. Humans who pass comprehension challenges for a module get more authority to steer agent work in that module. Incentivizes active learning.
+
 **What Tensegrity enforces:**
 - Quality requirements (tests, coverage, documentation)
 - Architectural constraints (layering, dependencies, contracts)
 - Process requirements (review for large changes, migration paths for breaking changes)
 - Risk management (blast radius limits, gradual rollout)
+- **Human understanding requirements** (comprehension challenges before approving large changes, knowledge gap alerts)
 
-Tensegrity is governance. It embodies the control rods that keep the reaction sustained. Different Tensegrity configurations create different equilibrium points - move fast with minimal gates, or move carefully with extensive checks.
+Tensegrity is governance. It embodies the control rods that keep the reaction sustained. Different Tensegrity configurations create different equilibrium points - move fast with minimal gates, or move carefully with extensive checks. **Critically, it prevents the knowledge divergence problem by making active learning a first-class primitive, not an afterthought.**
 
 ## The Contract Boundaries
 
@@ -303,6 +389,34 @@ POST /control/override
 
 GET /control/history
   → Log of human interventions
+
+Active Learning
+POST /learning/predict
+  {task_id, human_prediction: {performance_impact, failure_modes, coupling_changes}}
+  → Register prediction before agent implements
+  → After implementation, compare prediction to actual outcomes
+
+GET /learning/challenge
+  → Returns comprehension challenge: code snippet + "what breaks if X changes?"
+  → Human answers, system checks correctness via test execution
+
+POST /learning/experiment
+  {module, hypothesis: "changing X will break Y"}
+  → Spin up sandbox, human makes change, system runs tests
+  → Shows what actually broke, human updates model
+
+GET /learning/knowledge_map
+  → {modules: [{name, human_understanding: 0-100, last_tested, risk_score}]}
+  → Visualization of which areas human deeply understands vs. not
+
+GET /learning/gaps
+  → Modules with low understanding + high change frequency = risk
+  → Surfaces learning opportunities
+
+POST /learning/attest
+  {module, challenge_id, answer}
+  → Human completes challenge, earns comprehension credit
+  → Unlocks steering authority for that module
 ```
 
 **Consumes from PadAI:**
@@ -348,6 +462,53 @@ Tensegrity → Human: Alert "Coupling degrading, consider adding dependency gate
 Human → Tensegrity: POST /invariants/configure {dependency_depth_limit: 3}
 Tensegrity → Tensegrity: Update enforcement rules
 Tensegrity → PadAI (WS): Future submissions checked with new rule
+```
+
+### Active Learning Flow (Prediction Challenge)
+```
+Agent claims task: "Implement Redis caching for API endpoints"
+Tensegrity → Human: "Predict impact before implementation"
+Human → Tensegrity: POST /learning/predict {
+  performance_impact: "50% latency reduction on reads",
+  failure_modes: "stale data if cache invalidation fails",
+  coupling_changes: "adds Redis dependency to API layer"
+}
+Agent implements caching
+Tensegrity observes actual metrics:
+  - Latency reduced 60% (prediction: 50%) ✓
+  - Stale data occurred in user profile endpoint (predicted) ✓
+  - Also increased memory usage 200MB (not predicted) ✗
+  - Coupling to Redis matches prediction ✓
+Tensegrity → Human: "Prediction 75% accurate. Key miss: memory impact. Update model."
+Human: "Learned: caching has memory cost, need to predict that next time"
+Tensegrity updates knowledge map: human understanding of caching: 85/100
+```
+
+### Active Learning Flow (Comprehension Sampling)
+```
+Agent recently changed auth module (5 files, 300 lines)
+Tensegrity → Human: GET /learning/challenge
+  Challenge: "If Session.user_id field changes from string to int, what breaks?"
+Human → Tensegrity: "User lookups in database, JWT token parsing, session serialization"
+Tensegrity spins sandbox, makes change, runs tests
+Actual breaks: User lookups ✓, JWT parsing ✓, session serialization ✓, ALSO: API contract validation ✗
+Tensegrity → Human: "80% correct. Missed: API contracts. Here's the test failure."
+Human reviews failure, updates mental model
+Tensegrity updates knowledge map: auth module understanding: 80/100
+```
+
+### Active Learning Flow (Experimental Sandbox)
+```
+Human curious: "What happens if I remove this error handler?"
+Human → Tensegrity: POST /learning/experiment {
+  hypothesis: "Removing ErrorBoundary will crash entire app on component error"
+}
+Tensegrity → Sandbox: Create isolated env, human makes change
+Human runs tests in sandbox
+Result: Only that component crashes, app continues (hypothesis wrong!)
+Tensegrity → Human: "Error isolation works differently than you thought. See test results."
+Human: "Learned: React error boundaries scope errors to subtrees, not whole app"
+Tensegrity updates knowledge map: React error handling: 90/100
 ```
 
 ### Agents Collaborate
@@ -435,6 +596,7 @@ Different contexts require different equilibrium points. Tensegrity should suppo
 - Velocity: Maximum (ship fast, iterate)
 - Quality: Minimal gates (tests exist, but low coverage threshold)
 - Coherence: Loose (architectural consistency comes later)
+- Learning: Lightweight (prediction challenges on critical paths only)
 - Scope: Aggressive deadlines
 
 **Invariants:**
@@ -443,13 +605,15 @@ Different contexts require different equilibrium points. Tensegrity should suppo
 - Breaking changes allowed (it's early, APIs unstable)
 - Small PR size limit relaxed
 - Auto-merge if tests pass
+- Prediction challenge for changes to core auth/payment logic only
 
 **Equilibrium metrics:**
 - Velocity: 50+ tasks/day target
 - Cycle time: <2 hours preferred
 - Bug rate: Acceptable if not blocking users
+- Human understanding of critical paths: >70%
 
-**Human role:** Set direction, unblock agents, make product calls. Minimal review.
+**Human role:** Set direction, unblock agents, make product calls. Minimal review. Stay sharp on core business logic through lightweight prediction challenges.
 
 ### Enterprise Profile: Stability and Compliance
 
@@ -457,6 +621,7 @@ Different contexts require different equilibrium points. Tensegrity should suppo
 - Velocity: Moderate (steady progress)
 - Quality: High (extensive testing, documentation required)
 - Coherence: Strict (architecture must be consistent)
+- Learning: Comprehensive (regular comprehension sampling, mandatory for approvals)
 - Compliance: Audit trails, review required
 
 **Invariants:**
@@ -465,15 +630,18 @@ Different contexts require different equilibrium points. Tensegrity should suppo
 - API contracts versioned
 - Security scan clean (no critical/high/medium)
 - Performance budgets enforced
-- Large changes require human review
+- Large changes require human review AND comprehension challenge
 - Architectural layers enforced
+- Human understanding score >60% for all modified modules before approval
 
 **Equilibrium metrics:**
 - Velocity: 10-20 tasks/day acceptable
 - Cycle time: <1 day preferred
 - Bug rate: Very low tolerance
+- Human knowledge map coverage: >80% of active modules
+- Knowledge gap alert response time: <24 hours
 
-**Human role:** Review exceptions, approve breaking changes, audit compliance. Strategic architecture.
+**Human role:** Review exceptions, approve breaking changes, audit compliance. Strategic architecture. Maintain deep understanding through regular comprehension sampling. Cannot approve changes in modules they haven't passed challenges for.
 
 ### Open Source Profile: Transparent and Democratic
 
@@ -505,11 +673,15 @@ PadAI becomes the coordination layer for agent teams. You spin up 5-10 agents, p
 
 Tensegrity adds basic governance. Test coverage is enforced. Breaking changes are caught. Large PRs trigger review. You see equilibrium metrics and adjust thresholds. Velocity stays high while quality doesn't degrade.
 
+**Critically, Tensegrity introduces active learning primitives.** Before agents implement changes to critical paths, you make predictions about impact. After implementation, you see how your predictions compared to reality. The system tracks which parts of the codebase you understand vs. which are mysterious black boxes. When tech debt risk is high (low understanding + high change rate), you get alerts. You can't approve changes in areas you don't understand without passing comprehension challenges. This keeps your mental model synchronized with the rapidly evolving codebase.
+
 **Mid-term (1-2 years):**
 
 PadAI supports complex collaboration patterns. Agents decompose epics, hand off work in phases, pair-program on difficult tasks, and discover patterns they share with the swarm. The meta-architect agent runs inside PadAI, helping decompose work and check submissions.
 
 Tensegrity becomes smarter. It learns from history - if certain types of changes always fail tests, it warns agents proactively. It auto-tunes thresholds based on observed metrics. It detects architectural drift before it becomes a problem. Different teams use different Tensegrity profiles.
+
+**Active learning becomes deeply integrated.** Tensegrity analyzes your prediction accuracy over time and identifies your knowledge blind spots. It generates targeted comprehension challenges based on recent agent work. The experimental sandbox becomes a full "codebase gym" where you can safely break things to learn. Understanding gates become granular - different modules require different comprehension levels to approve changes. The system gamifies learning - completing challenges unlocks steering authority, creating intrinsic motivation to stay sharp. Your knowledge map becomes as important as the codebase dependency graph.
 
 **Long-term (2-5 years):**
 
@@ -521,17 +693,22 @@ The pattern becomes common: when you need many autonomous agents to work togethe
 
 ## Why This Matters
 
-AI agents will get better at execution. The constraint isn't coding ability anymore - it's coordination and governance. Teams that solve multi-agent governance will move 10-100x faster than teams that don't.
+AI agents will get better at execution. The constraint isn't coding ability anymore - it's coordination, governance, and **human understanding at velocity**. Teams that solve multi-agent governance AND the knowledge representation problem will move 10-100x faster than teams that don't.
 
 Current approaches don't scale:
 - Single-agent systems (GitHub Copilot, Cursor) don't coordinate multiple agents
 - CI/CD catches failures but doesn't prevent them or guide agents
 - Code review doesn't scale to 100 changes/day
 - Microservices enable parallel work but don't govern coherence
+- **AI explanations create illusion of understanding without actual learning**
+- **Passive documentation becomes stale immediately at agent velocity**
+- **Humans become managers of code they don't understand - invisible tech debt accumulates**
 
-PadAI + Tensegrity provide the missing layer. They enable agent scale while maintaining coherence. This is infrastructure for the next era of software development - where agents are first-class participants and humans steer rather than execute.
+The epistemological problem is the silent killer. Agents write code faster than humans build mental models. The knowledge gap grows until the human can't make good architectural decisions, can't recognize fundamental issues, can't debug unexpected failures. The codebase becomes a black box maintained by AI, guided by a human who's flying blind. This is already happening with complex frameworks, but now it's YOUR codebase that you don't understand.
 
-If we get this right, software evolution accelerates by an order of magnitude. If we don't, agent-generated codebases become unmaintainable messes. The stakes are high.
+PadAI + Tensegrity provide the missing layer. They enable agent scale while maintaining coherence **and human understanding**. PadAI provides coordination infrastructure. Tensegrity provides governance PLUS active learning primitives that keep human mental models synchronized with ground truth. This is infrastructure for the next era of software development - where agents are first-class participants and humans steer with actual understanding, not guesswork.
+
+If we get this right, software evolution accelerates by an order of magnitude while humans stay in the loop with real comprehension. If we don't, agent-generated codebases become unmaintainable messes managed by humans who don't understand what they're approving. The stakes are high.
 
 ---
 
