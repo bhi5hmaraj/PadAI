@@ -1,0 +1,27 @@
+substitutions:
+  _REGION: us-central1
+  _REPO: padai
+  _SERVICE: padai-preview
+options:
+  logging: CLOUD_LOGGING_ONLY
+steps:
+  - name: gcr.io/cloud-builders/docker
+    id: build
+    args: ["build", "-t", "$REGION-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA", "."]
+  - name: gcr.io/cloud-builders/docker
+    id: push
+    args: ["push", "$REGION-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA"]
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: deploy
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud run deploy ${_SERVICE} \
+          --image "$REGION-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA" \
+          --region "${_REGION}" \
+          --platform managed \
+          --allow-unauthenticated \
+          --set-env-vars WORKSPACE_PATH=/workspace,LOG_LEVEL=INFO
+images:
+  - "$REGION-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA"
