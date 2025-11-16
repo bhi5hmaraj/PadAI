@@ -4,14 +4,125 @@
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+}
+
+:root {
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  /* Dark (default) */
+  --bg: #0a0a0a;
+  --text: #ffffff;
+  --header-bg: #111111;
+  --header-border: #333333;
+  --heading-color: #ffffff;
+  --label-color: #999999;
+  --value-color: #ffffff;
+  --button-bg: #3b82f6;
+  --button-bg-hover: #2563eb;
+  --muted: #999999;
+
+  --card-bg: #1a1a1a;
+  --card-border: #333333;
+  --card-completed-bg: #1e3a5f;
+  --card-inprog-bg: #4a3a1a;
+  --card-ready-bg: #1a3a2a;
+  --card-open-bg: #1a1b1e;
+
+  --edge-stroke: #555555;
+  --background-grid: #333333;
+  --controls-bg: #1a1a1a;
+  --controls-border: #333333;
+  --controls-hover: #2a2a2a;
+  --minimap-bg: #1a1a1a;
+  --minimap-mask: rgba(0, 0, 0, 0.8);
+  /* React Flow canvas background */
+  --flow-bg: #0a0a0a;
+  --edge-highlight: #22d3ee;  /* cyan */
+  --dep-highlight: #22d3ee;
+  --blocked-highlight: #ef4444;
+}
+
+body.theme-light {
+  --bg: #ffffff;
+  --text: #111111;
+  --header-bg: #ffffff;
+  --header-border: #e5e7eb;
+  --heading-color: #111111;
+  --label-color: #6b7280;
+  --value-color: #111111;
+  --button-bg: #2563eb;
+  --button-bg-hover: #1d4ed8;
+  --muted: #6b7280;
+
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --card-completed-bg: #e8f1fe;
+  --card-inprog-bg: #fff7e6;
+  --card-ready-bg: #ecfdf5;
+  --card-open-bg: #f7f7f7;
+
+  --edge-stroke: #cbd5e1;
+  --background-grid: #e5e7eb;
+  --controls-bg: #ffffff;
+  --controls-border: #e5e7eb;
+  --controls-hover: #f3f4f6;
+  --minimap-bg: #ffffff;
+  --minimap-mask: rgba(255, 255, 255, 0.8);
+  --flow-bg: #ffffff;
+  --edge-highlight: #0891b2;
+  --dep-highlight: #0891b2;
+  --blocked-highlight: #dc2626;
+}
+
+/* Imperial (Star Wars) theme */
+body.theme-imperial {
+  --bg: #0b0d10;
+  --text: #e5e7eb;
+  --header-bg: #0d1117;
+  --header-border: #1f2937;
+  --heading-color: #f8fafc;
+  --label-color: #9ca3af;
+  --value-color: #f9fafb;
+  --button-bg: #ff2d55;
+  --button-bg-hover: #e11d48;
+  --muted: #94a3b8;
+
+  --card-bg: #0f131a;
+  --card-border: #1f2937;
+  --card-completed-bg: #0c1a2e;
+  --card-inprog-bg: #23160f;
+  --card-ready-bg: #0f1f17;
+  --card-open-bg: #0f1115;
+
+  --edge-stroke: #374151;
+  --background-grid: #2a2f3a;
+  --controls-bg: #0f131a;
+  --controls-border: #1f2937;
+  --controls-hover: #1a202c;
+  --minimap-bg: #0f131a;
+  --minimap-mask: rgba(0, 0, 0, 0.85);
+
+  /* Accent for Imperial red */
+  --accent: #ff2d55;
+  --edge-highlight: #00d0ff;
+  --dep-highlight: #00d0ff;
+  --blocked-highlight: #ff3b30;
+  --flow-bg: #0b0d10;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-mono) !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #0a0a0a;
-  color: #fff;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Ensure controls inherit monospace as well */
+button, input, select, textarea, .react-flow__controls, .react-flow__minimap {
+  font-family: var(--font-mono) !important;
 }
 
 #root {
