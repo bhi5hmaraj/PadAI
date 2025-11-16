@@ -3,6 +3,11 @@ export interface Task {
   title: string;
   status?: string;
   assignee?: string;
+  description?: string;
+  issue_type?: string; // task|bug|feature|epic|chore
+  priority?: number;   // 0-4
+  created_at?: string;
+  updated_at?: string;
   dependencies?: Dependency[];
 }
 

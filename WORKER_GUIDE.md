@@ -237,6 +237,38 @@ curl -X POST $PADAI_MASTER/api/complete \
   -d '{"task_id": "padai-4"}'
 ```
 
+### POST /api/create
+
+Create a new task via the master server (wraps `bd create`).
+
+```bash
+curl -X POST $PADAI_MASTER/api/create \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Platformer MVP: Scaffold",
+    "description": "Single HTML + canvas with basic movement",
+    "issue_type": "task",
+    "priority": 2,
+    "assignee": "littleboy"
+  }'
+```
+
+### POST /api/update
+
+Update an existing task (status, assignee, title, priority, notes, etc.).
+
+```bash
+curl -X POST $PADAI_MASTER/api/update \
+  -H "Content-Type: application/json" \
+  -d '{
+    "task_id": "padai-42",
+    "status": "in_progress",
+    "assignee": "littleboy",
+    "priority": 1,
+    "title": "Platformer MVP: Basic Movement"
+  }'
+```
+
 ## Tips for Claude Code Agents
 
 ### Understanding Your Task

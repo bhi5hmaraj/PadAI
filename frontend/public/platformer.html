@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Platformer MVP</title>
+    <style>
+      html, body { height: 100%; margin: 0; background: #0b0d10; color: #e5e7eb; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+      .wrap { display: flex; flex-direction: column; height: 100%; }
+      header { padding: 8px 12px; display: flex; gap: 12px; align-items: center; border-bottom: 1px solid #1f2937; background: #0d1117; }
+      header .btn { border: 1px solid #1f2937; background: #0f131a; color: #e5e7eb; padding: 4px 8px; border-radius: 6px; cursor: pointer; }
+      header .btn:hover { background: #161b22; }
+      .hud { margin-left: auto; opacity: 0.8; font-size: 12px; }
+      canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+      .stage { flex: 1 1 auto; min-height: 0; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <strong>Platformer MVP</strong>
+        <button class="btn" id="reset">Restart (R)</button>
+        <div class="hud" id="hud"></div>
+      </header>
+      <div class="stage"><canvas id="game"></canvas></div>
+    </div>
+
+    <script>
+      // Basic platformer with loop, input, physics, AABB collision, win flag
+      const canvas = document.getElementById('game');
+      const ctx = canvas.getContext('2d');
+      const hud = document.getElementById('hud');
+      const resetBtn = document.getElementById('reset');
+
+      const W = 960, H = 540; // logical size
+      function resize() {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = W * dpr;
+        canvas.height = H * dpr;
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      // Input
+      const keys = new Set();
+      window.addEventListener('keydown', (e) => { keys.add(e.key.toLowerCase()); if (e.key === 'r' || e.key === 'R') restart(); });
+      window.addEventListener('keyup',   (e) => { keys.delete(e.key.toLowerCase()); });
+      resetBtn.addEventListener('click', () => restart());
+
+      // World
+      const gravity = 1800; // px/s^2
+      const moveSpeed = 360; // px/s
+      const jumpSpeed = 700; // px/s
+      const COYOTE_TIME = 0.08; // s
+      const JUMP_BUFFER = 0.08; // s
+
+      let player, platforms, flag, state;
+
+      function restart() {
+        player = { x: 80, y: 380, w: 32, h: 42, vx: 0, vy: 0, onGround: false, coyote: 0, jumpBuf: 0 };
+        // Simple level
+        platforms = [
+          {x: 0, y: 500, w: 960, h: 40}, // ground
+          {x: 200, y: 430, w: 160, h: 20},
+          {x: 420, y: 360, w: 160, h: 20},
+          {x: 640, y: 300, w: 160, h: 20},
+        ];
+        flag = { x: 760, y: 240, w: 24, h: 60 };
+        state = { win: false, t: 0 };
+      }
+      restart();
+
+      // AABB collision and resolution (axis-separated)
+      function aabb(ax, ay, aw, ah, bx, by, bw, bh) {
+        return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
+      }
+
+      function resolveCollisions(p, dt) {
+        // Horizontal
+        p.x += p.vx * dt;
+        for (const s of platforms) {
+          if (aabb(p.x, p.y, p.w, p.h, s.x, s.y, s.w, s.h)) {
+            if (p.vx > 0) p.x = s.x - p.w; else if (p.vx < 0) p.x = s.x + s.w;
+            p.vx = 0;
+          }
+        }
+        // Vertical
+        p.y += p.vy * dt;
+        let onGround = false;
+        for (const s of platforms) {
+          if (aabb(p.x, p.y, p.w, p.h, s.x, s.y, s.w, s.h)) {
+            if (p.vy > 0) { p.y = s.y - p.h; onGround = true; }
+            else if (p.vy < 0) { p.y = s.y + s.h; }
+            p.vy = 0;
+          }
+        }
+        p.onGround = onGround;
+      }
+
+      // Loop
+      let last = performance.now();
+      function loop(now) {
+        const dt = Math.min(0.033, (now - last) / 1000); // clamp dt
+        last = now;
+
+        if (!state.win) {
+          // Timers
+          player.coyote = Math.max(0, player.onGround ? COYOTE_TIME : player.coyote - dt);
+          player.jumpBuf = Math.max(0, player.jumpBuf - dt);
+
+          // Input
+          const left = keys.has('arrowleft') || keys.has('a');
+          const right = keys.has('arrowright') || keys.has('d');
+          const jumpPressed = keys.has(' ') || keys.has('w') || keys.has('arrowup');
+
+          player.vx = (right - left) * moveSpeed;
+          if (jumpPressed) player.jumpBuf = JUMP_BUFFER;
+          if (player.jumpBuf > 0 && (player.onGround || player.coyote > 0)) {
+            player.vy = -jumpSpeed;
+            player.coyote = 0; player.jumpBuf = 0;
+          }
+
+          // Physics
+          player.vy += gravity * dt;
+          resolveCollisions(player, dt);
+
+          // Win detection
+          if (aabb(player.x, player.y, player.w, player.h, flag.x, flag.y, flag.w, flag.h)) {
+            state.win = true;
+          }
+        }
+
+        // Draw
+        ctx.clearRect(0, 0, W, H);
+        // Background grid
+        ctx.fillStyle = '#0b0d10'; ctx.fillRect(0,0,W,H);
+        // Platforms
+        ctx.fillStyle = '#2a2f3a';
+        for (const s of platforms) ctx.fillRect(s.x, s.y, s.w, s.h);
+        // Flag
+        ctx.fillStyle = '#ff2d55'; ctx.fillRect(flag.x, flag.y, flag.w, flag.h);
+        // Player
+        ctx.fillStyle = '#60a5fa'; ctx.fillRect(player.x, player.y, player.w, player.h);
+
+        // HUD
+        hud.textContent = state.win ? 'You win! Press R to restart' : 'Arrows/WASD to move, Space/W/Up to jump';
+
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    </script>
+  </body>
+  </html>
+
