@@ -90,3 +90,33 @@ Follow the Cloud Run guide: map a custom domain to `$SERVICE`, then update the d
 - The Dockerfile exposes 8080 (Cloud Run default); the app uses `$PORT` internally.
 - The frontend `dist/` is served statically by FastAPI under `/`.
 - For persistent Beads data, consider mounting GCS via Cloud Run volumes (GCS FUSE) and pointing `WORKSPACE_PATH` there.
+
+## Manual (no Terraform) — Quick Deploy with gcloud
+
+If Terraform feels heavy for a personal project, use the provided script:
+
+```bash
+scripts/deploy_cloud_run.sh <PROJECT_ID> <REGION> <SERVICE>
+# Example:
+scripts/deploy_cloud_run.sh my-proj us-central1 padai
+```
+
+This will:
+- Enable required APIs
+- Build the container with Cloud Build
+- Push to Artifact Registry (creates `padai` repo on first use)
+- Deploy to Cloud Run service `<SERVICE>`
+
+Env vars:
+- Set via `ENV_VARS`, defaulting to `WORKSPACE_PATH=/workspace,LOG_LEVEL=INFO`.
+
+```bash
+ENV_VARS="WORKSPACE_PATH=/workspace,LOG_LEVEL=DEBUG" \
+  scripts/deploy_cloud_run.sh my-proj us-central1 padai-preview
+```
+
+When Terraform is useful:
+- Team environments (review apps, staging/prod)
+- Repeatable infra across projects/regions
+- Versioned infra, drift detection, and plan reviews
+- Complex IAM and service bindings
