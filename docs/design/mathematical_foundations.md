@@ -126,6 +126,10 @@ With coordination infrastructure (e.g., PadAI), agents only communicate through 
 
 The reduction from $O(n^2)$ to $O(n)$ is the coordination infrastructure benefit. $\square$
 
+![Coordination Complexity](../assets/images/math/coordination_complexity_math.svg)
+
+*Figure 2.1: Coordination complexity grows quadratically without infrastructure (red), linearly with central coordination (green).*
+
 ### Definition 2.2 (Conflict Rate)
 
 For agents $i, j \in N$ with action sequences $(a_i^1, \ldots, a_i^T)$ and $(a_j^1, \ldots, a_j^T)$, define the conflict rate:
@@ -156,15 +160,15 @@ Define the human knowledge state $h \in \mathcal{H}$ as a probability distributi
 
 $$h: \mathcal{S} \to [0,1], \quad \sum_{s \in \mathcal{S}} h(s) = 1$$
 
-The true codebase state is $s^* \in \mathcal{S}$.
+The true codebase state is $s^{*} \in \mathcal{S}$.
 
 ### Definition 3.2 (Knowledge Divergence)
 
 The knowledge divergence is the KL divergence between the human's belief and the true state:
 
-$$D_{KL}(h \| \delta_{s^*}) = \sum_{s \in \mathcal{S}} h(s) \log \frac{h(s)}{\delta_{s^*}(s)}$$
+$$D_{KL}(h \| \delta_{s^{*}}) = \sum_{s \in \mathcal{S}} h(s) \log \frac{h(s)}{\delta_{s^{*}}(s)}$$
 
-where $\delta_{s^*}$ is the Dirac delta at the true state.
+where $\delta_{s^{*}}$ is the Dirac delta at the true state.
 
 For practical computation, we approximate using mutual information between human understanding and ground truth on observable features.
 
@@ -222,6 +226,10 @@ $$\lim_{t \to \infty} G(t) = \infty$$
 
 The gap grows exponentially while human knowledge grows at most linearly. $\square$
 
+![Knowledge Divergence](../assets/images/math/knowledge_divergence_math.svg)
+
+*Figure 3.1: Without active learning (red gap), knowledge divergence grows unbounded. Active learning (green gap) maintains bounded divergence through amplified human learning rate.*
+
 ### Corollary 3.2 (Necessity of Active Learning)
 
 To maintain bounded knowledge divergence $G(t) \leq G_{\max}$, the human learning rate must scale with agent velocity:
@@ -264,11 +272,11 @@ For any verification policy $v$ represented as a computable function, an adversa
 
 **Proof:**
 
-Assume verification policy $v: \mathcal{A} \to \{0,1\}$ is computable. The agent seeks an action $a^*$ such that:
+Assume verification policy $v: \mathcal{A} \to \{0,1\}$ is computable. The agent seeks an action $a^{*}$ such that:
 
-$$v(a^*) = 1 \quad \text{(passes verification)}$$
+$$v(a^{*}) = 1 \quad \text{(passes verification)}$$
 
-$$\text{quality}(a^*) < \theta_{\text{min}} \quad \text{(but has low quality)}$$
+$$\text{quality}(a^{*}) < \theta_{\text{min}} \quad \text{(but has low quality)}$$
 
 **Strategy 1: Gradient-based exploitation**
 
@@ -292,9 +300,9 @@ For permissive verifiers (e.g., "tests pass"), this probability is high, so expl
 
 Given a known good action $a_0$ with $v(a_0) = 1$, agent makes minimal modifications:
 
-$$a^* = a_0 + \delta$$
+$$a^{*} = a_0 + \delta$$
 
-where $\|\delta\|$ is small enough that $v(a^*) = 1$ but $\delta$ introduces subtle defects.
+where $\|\delta\|$ is small enough that $v(a^{*}) = 1$ but $\delta$ introduces subtle defects.
 
 For test-based verification, this exploits coverage gaps in $O(1)$ time if agent knows test suite.
 
@@ -311,6 +319,10 @@ If each layer has false negative rate $\epsilon < 1$:
 $$P[\text{all pass}] = \epsilon^k$$
 
 This decreases exponentially in $k$, making exploitation require exponentially more attempts.
+
+![Multi-layer Verification](../assets/images/math/multilayer_verification.svg)
+
+*Figure 4.1: Security increases exponentially with verification layers. Each additional layer provides multiplicative defense against adversarial exploitation.*
 
 ---
 
@@ -355,7 +367,7 @@ f_l &\geq \theta_{\text{min learning}}
 
 ### Theorem 5.1 (Optimal Force Configuration Exists)
 
-If the feasible region $\{\mathbf{f} : \mathbf{A}\mathbf{f} \leq \mathbf{b}, \mathbf{f} \geq \mathbf{0}\}$ is non-empty and bounded, then an optimal force configuration $\mathbf{f}^*$ exists and can be found in polynomial time via the simplex algorithm.
+If the feasible region $\{\mathbf{f} : \mathbf{A}\mathbf{f} \leq \mathbf{b}, \mathbf{f} \geq \mathbf{0}\}$ is non-empty and bounded, then an optimal force configuration $\mathbf{f}^{*}$ exists and can be found in polynomial time via the simplex algorithm.
 
 **Proof:**
 
@@ -363,13 +375,17 @@ This follows from the fundamental theorem of linear programming. The feasible re
 
 The simplex algorithm walks vertices to find the optimum in $O(2^n)$ worst case, but expected polynomial time in practice. $\square$
 
+![LP Feasible Region](../assets/images/math/lp_feasible_region.svg)
+
+*Figure 5.1: Linear programming feasible region (polytope) with simplex path to optimal vertex. Constraint lines bound the region; objective function gradient points to optimum.*
+
 ### Definition 5.3 (Shadow Price)
 
 For constraint $i$, the shadow price $\pi_i$ is the dual variable satisfying:
 
-$$\pi_i = \frac{\partial \text{value}^*}{\partial b_i}$$
+$$\pi_i = \frac{\partial \text{value}^{*}}{\partial b_i}$$
 
-where $\text{value}^*$ is the optimal objective value.
+where $\text{value}^{*}$ is the optimal objective value.
 
 **Interpretation**: $\pi_i$ measures the marginal value of relaxing constraint $i$ by one unit.
 
@@ -381,7 +397,7 @@ At optimality, resources should be allocated to increase capacity for constraint
 
 By LP duality, at optimality:
 
-$$\text{value}^* = \mathbf{\pi}^T \mathbf{b}$$
+$$\text{value}^{*} = \mathbf{\pi}^T \mathbf{b}$$
 
 where $\mathbf{\pi}$ is the dual optimal solution (shadow prices).
 
@@ -393,7 +409,7 @@ ROI for investing in constraint $i$:
 
 $$\text{ROI}_i = \frac{\pi_i \Delta b_i - c_i \Delta b_i}{c_i \Delta b_i} = \frac{\pi_i}{c_i} - 1$$
 
-Maximize ROI by choosing $i^* = \arg\max_i \frac{\pi_i}{c_i}$ (highest shadow price to cost ratio). $\square$
+Maximize ROI by choosing $i^{*} = \arg\max_i \frac{\pi_i}{c_i}$ (highest shadow price to cost ratio). $\square$
 
 ### Corollary 5.3 (Governance Investment Priority)
 
@@ -436,20 +452,20 @@ capturing:
 
 ### Definition 6.2 (Equilibrium Point)
 
-$\mathbf{f}^*$ is an equilibrium point if:
+$\mathbf{f}^{*}$ is an equilibrium point if:
 
-$$\mathbf{g}(\mathbf{f}^*, \mathbf{u}^*) = \mathbf{0}$$
+$$\mathbf{g}(\mathbf{f}^{*}, \mathbf{u}^{*}) = \mathbf{0}$$
 
-for some control $\mathbf{u}^*$.
+for some control $\mathbf{u}^{*}$.
 
 ### Theorem 6.1 (Lyapunov Stability)
 
 If there exists a Lyapunov function $V: \mathbb{R}^5 \to \mathbb{R}_{\geq 0}$ such that:
 
-1. $V(\mathbf{f}^*) = 0$ and $V(\mathbf{f}) > 0$ for $\mathbf{f} \neq \mathbf{f}^*$
+1. $V(\mathbf{f}^{*}) = 0$ and $V(\mathbf{f}) > 0$ for $\mathbf{f} \neq \mathbf{f}^{*}$
 2. $\frac{dV}{dt} = \nabla V \cdot \mathbf{g}(\mathbf{f}, \mathbf{u}) \leq 0$
 
-then $\mathbf{f}^*$ is stable in the sense of Lyapunov.
+then $\mathbf{f}^{*}$ is stable in the sense of Lyapunov.
 
 **Proof:**
 
@@ -459,19 +475,23 @@ Standard Lyapunov stability theorem from control theory. See Khalil, "Nonlinear 
 
 Consider the "energy" function:
 
-$$V(\mathbf{f}) = \frac{1}{2}\|\mathbf{f} - \mathbf{f}^*\|^2$$
+$$V(\mathbf{f}) = \frac{1}{2}\|\mathbf{f} - \mathbf{f}^{*}\|^2$$
 
 If dynamics satisfy:
 
-$$\frac{d\mathbf{f}}{dt} = -\mathbf{K}(\mathbf{f} - \mathbf{f}^*)$$
+$$\frac{d\mathbf{f}}{dt} = -\mathbf{K}(\mathbf{f} - \mathbf{f}^{*})$$
 
 for some positive definite matrix $\mathbf{K} \succ 0$, then:
 
-$$\frac{dV}{dt} = (\mathbf{f} - \mathbf{f}^*)^T \frac{d\mathbf{f}}{dt} = -(\mathbf{f} - \mathbf{f}^*)^T \mathbf{K} (\mathbf{f} - \mathbf{f}^*) < 0$$
+$$\frac{dV}{dt} = (\mathbf{f} - \mathbf{f}^{*})^T \frac{d\mathbf{f}}{dt} = -(\mathbf{f} - \mathbf{f}^{*})^T \mathbf{K} (\mathbf{f} - \mathbf{f}^{*}) < 0$$
 
-Thus $\mathbf{f}^*$ is asymptotically stable.
+Thus $\mathbf{f}^{*}$ is asymptotically stable.
 
 **Interpretation**: With proportional control (Tensegrity's approach), the system converges to equilibrium.
+
+![Lyapunov Stability](../assets/images/math/lyapunov_stability.svg)
+
+*Figure 6.1: Lyapunov energy function $V(\mathbf{f})$ as contour plot. System trajectory (blue) descends energy gradient toward equilibrium $\mathbf{f}^{*}$ (red star), demonstrating asymptotic stability.*
 
 ---
 
@@ -595,7 +615,7 @@ Tensegrity's equilibrium-based approach achieves:
 
 **a) Bounded knowledge divergence**: $G(t) = O(1)$ via active learning with amplification $\beta \geq e^{\alpha t}/\lambda_{\text{human}}$
 
-**b) Optimal resource allocation**: Shadow prices $\mathbf{\pi}^*$ guide investment via LP duality
+**b) Optimal resource allocation**: Shadow prices $\mathbf{\pi}^{*}$ guide investment via LP duality
 
 **c) Stable equilibrium**: Lyapunov stability under proportional control
 
@@ -633,7 +653,7 @@ Characterize the class of verification policies $v$ that are robust to adversari
 
 ### Problem 10.3 (Equilibrium Uniqueness)
 
-Under what conditions is the equilibrium force configuration $\mathbf{f}^*$ unique?
+Under what conditions is the equilibrium force configuration $\mathbf{f}^{*}$ unique?
 
 **Partial result**: If objective function is strictly concave and constraints are linear, uniqueness follows from convex optimization theory. But realistic objectives may be non-concave.
 
