@@ -44,16 +44,30 @@ chmod +x /usr/local/bin/bd
 ### 2. Start Backend
 
 ```bash
+# Create and activate a virtualenv (Python 3.10–3.13)
+python -m venv .venv
+source .venv/bin/activate
+
+# Upgrade build tooling
+python -m pip install -U pip setuptools wheel
+
 # Install dependencies
 pip install -r requirements.txt
 
-# Run server
+# Option A: One-shot full stack (build FE + run API)
+./scripts/run_server.sh
+
+# Option B: Run only API (expects built FE in frontend/dist)
 python main.py
 ```
 
 Server runs on http://localhost:8000
 
-### 3. Start Frontend
+Note: On Python 3.13, older pydantic versions may fail to build pydantic-core from source.
+This repo pins pydantic to a version compatible with 3.13. If you still hit build errors,
+ensure your pip/setuptools/wheel are up to date and try again, or use Python 3.12.
+
+### 3. Start Frontend (Dev optional)
 
 ```bash
 cd frontend
@@ -65,7 +79,7 @@ npm install
 npm run dev
 ```
 
-Frontend runs on http://localhost:3000
+Frontend runs on http://localhost:3000 (dev). For production, the Python server serves the compiled frontend at `/`.
 
 ### 4. Initialize Beads Project
 
@@ -193,6 +207,63 @@ Response:
 }
 ```
 
+### POST /api/create
+
+Create a new task in the Beads workspace.
+
+```bash
+curl -X POST http://localhost:8000/api/create \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Platformer MVP: Scaffold",
+    "description": "Single HTML + canvas with basic movement",
+    "issue_type": "task",
+    "priority": 2,
+    "labels": ["game", "platformer"],
+    "assignee": "littleboy"
+  }'
+```
+
+Response:
+```json
+{
+  "task": {
+    "id": "padai-42",
+    "title": "Platformer MVP: Scaffold",
+    "status": "open",
+    "priority": 2,
+    "issue_type": "task",
+    "assignee": "littleboy",
+    "created_at": "..."
+  }
+}
+```
+
+### POST /api/update
+
+Update fields of an existing task (wraps `bd update`). Only provided fields are changed.
+
+```bash
+curl -X POST http://localhost:8000/api/update \
+  -H "Content-Type: application/json" \
+  -d '{
+    "task_id": "padai-42",
+    "status": "in_progress",
+    "assignee": "littleboy",
+    "priority": 1,
+    "title": "Platformer MVP: Basic Movement",
+    "notes": "scaffold done"
+  }'
+```
+
+Response:
+```json
+{
+  "success": true,
+  "task": { "id": "padai-42", "status": "in_progress", ... }
+}
+```
+
 ## 🤖 For Worker Agents
 
 If you're a Claude Code agent joining this project, see **[WORKER_GUIDE.md](WORKER_GUIDE.md)** for complete instructions.
@@ -223,6 +294,19 @@ curl -s -X POST $PADAI_MASTER/api/complete \
   -d "{\"task_id\": \"$TASK_ID\"}"
 
 echo "✅ Task completed!"
+```
+
+Create a new task (optional):
+```bash
+curl -s -X POST $PADAI_MASTER/api/create \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Platformer MVP: Scaffold",
+    "description": "Single HTML + canvas with basic movement",
+    "priority": 2,
+    "issue_type": "task",
+    "assignee": "'$AGENT_NAME'"
+  }' | jq
 ```
 
 ### Example Agent Workflow Script
@@ -265,8 +349,27 @@ done
 
 ## Environment Variables
 
-- `WORKSPACE_PATH`: Path to directory containing `.beads/` folder (default: `/workspace`)
+ - `WORKSPACE_PATH`: Path to directory containing `.beads/` folder (default: current working directory)
 - `VITE_API_URL`: API URL for frontend (default: `http://localhost:8000`)
+- `LOG_LEVEL`: Server log level (`DEBUG`, `INFO`, etc., default: `INFO`)
+
+### .env.local support
+
+The server auto-loads environment from `.env.local` (and `.env` if present) at startup.
+
+Example `.env.local`:
+```
+# Point to your repository workspace that contains .beads/
+WORKSPACE_PATH=/home/you/PadAI
+
+# Logging verbosity
+LOG_LEVEL=DEBUG
+
+# Optional: change port when running via uvicorn directly
+# PORT=8000
+```
+
+On startup, the server logs the resolved configuration, including the detected `WORKSPACE_PATH`, whether `.beads/issues.jsonl` is present, and whether the `bd` CLI is on PATH.
 
 ## Deployment
 

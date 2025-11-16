@@ -28,18 +28,25 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY main.py beads.py ./
 
+# Copy Beads workspace (if present) into an internal workspace path
+COPY .beads /workspace/.beads
+
 # Copy built frontend
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
 # Set workspace path
 ENV WORKSPACE_PATH=/workspace
 
-# Expose port
-EXPOSE 8000
+# Expose default Cloud Run port (honors PORT env variable at runtime)
+EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/')" || exit 1
+  CMD python - <<'PY' || exit 1
+import os, urllib.request
+port = os.getenv('PORT', '8080')
+urllib.request.urlopen(f'http://localhost:{port}/')
+PY
 
 # Run server
 CMD ["python", "main.py"]
