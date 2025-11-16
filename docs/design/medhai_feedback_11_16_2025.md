@@ -555,3 +555,281 @@ The move to MCP isn't about performance (you don't have bottlenecks yet). It's a
 The real value is in the collaboration primitives. How DO you make two agents work together? There's no playbook for this yet. You get to discover the patterns. That's rare and valuable.
 
 Start with WebSockets and agent heartbeats. Make the system observable. Once you can SEE agents coordinating in real-time, you'll know what to build next. The architecture will emerge from usage, not from planning.
+
+---
+
+## Theoretical Connections: Tensegrity and Linear Programming
+
+*Added as conceptual exploration*
+
+There's a fascinating mathematical parallel between tensegrity structures and linear programming (LP), particularly the simplex algorithm. Both frameworks solve optimization problems under constraints, and both navigate feasible regions to find equilibrium points.
+
+### The Core Analogy
+
+**Tensegrity Structure:**
+- Seeks stable configuration where internal forces balance
+- Compression members (struts) and tension members (cables) create constraints
+- Equilibrium occurs when the sum of forces equals zero
+- Multiple valid configurations exist (local minima), but we seek globally stable ones
+
+**Linear Programming:**
+- Seeks optimal solution that maximizes/minimizes an objective function
+- Inequality constraints define a feasible region (polytope)
+- Optimal solution lies at a vertex of the polytope
+- Multiple vertices exist, but only one (or a few) optimize the objective
+
+### The Simplex Algorithm Connection
+
+The simplex algorithm navigates the constraint polytope by moving along edges from vertex to vertex, always improving the objective function. This is remarkably similar to how tensegrity finds equilibrium:
+
+**Simplex Navigation:**
+```
+Start at initial vertex (basic feasible solution)
+↓
+Identify improving edge direction (entering variable)
+↓
+Move along edge to adjacent vertex (pivot)
+↓
+Repeat until no improving direction exists (optimal)
+```
+
+**Tensegrity Force Resolution:**
+```
+Start with initial configuration
+↓
+Identify force imbalances at nodes
+↓
+Adjust member lengths/tensions to reduce imbalance
+↓
+Iterate until force equilibrium achieved
+```
+
+Both are **iterative methods** moving through a **constrained space** toward an **equilibrium/optimum**.
+
+### Mapping Tensegrity to LP
+
+Consider our five-force governance system as an LP problem:
+
+**Decision Variables (what we tune):**
+- x₁ = Velocity force intensity (0-10)
+- x₂ = Quality force intensity (0-10)
+- x₃ = Coherence force intensity (0-10)
+- x₄ = Learning force intensity (0-10)
+- x₅ = Scope force intensity (0-10)
+
+**Objective Function (what we optimize):**
+- Maximize: `system_value = f(velocity, quality, coherence, learning, scope)`
+- Could be composite metric: `value = α·velocity + β·quality + γ·coherence + δ·learning + ε·scope`
+
+**Constraints (what must hold):**
+1. **Resource constraint**: `time_spent_on_governance ≤ available_human_hours`
+2. **Velocity-quality tradeoff**: `x₁ + x₂ ≤ max_combined_intensity` (can't max both)
+3. **Coherence requirement**: `x₃ ≥ min_coherence_threshold` (system must stay coherent)
+4. **Learning minimum**: `x₄ ≥ min_understanding_level` (human must understand critical paths)
+5. **Scope focus**: `x₅·backlog_size ≤ team_capacity`
+6. **Non-negativity**: `xᵢ ≥ 0` for all i
+7. **Upper bounds**: `xᵢ ≤ 10` for all i
+
+**Feasible Region:**
+The set of all (x₁, x₂, x₃, x₄, x₅) satisfying all constraints forms a 5-dimensional polytope. Different "equilibrium profiles" (Startup, Enterprise, OSS) are different vertices or regions within this polytope.
+
+### Why This Matters
+
+**1. Optimization Theory Applies**
+
+If we formalize Tensegrity as LP, we get:
+- **Duality theory**: For every primal problem (maximize value), there's a dual (minimize cost). The governance problem has a cost interpretation.
+- **Sensitivity analysis**: How much does optimal solution change if constraints shift? Useful for "what if we had 2x more human hours?"
+- **Shadow prices**: The marginal value of relaxing each constraint. Which constraint is the bottleneck?
+
+**2. Computational Tools Exist**
+
+LP solvers (GLPK, CPLEX, Gurobi) can:
+- Find optimal force settings given constraints and objective
+- Detect infeasible configurations (no valid equilibrium exists)
+- Suggest which constraints to relax if problem is infeasible
+- Compute sensitivity ranges for robust tuning
+
+**3. Adaptive Force Tuning**
+
+The simplex algorithm's edge-walking behavior suggests an implementation:
+```python
+def tune_equilibrium(current_forces, metrics, constraints):
+    """
+    Adjust forces incrementally toward better equilibrium.
+    Like simplex: move along edges, always improving.
+    """
+    # Current vertex in force-space
+    x = current_forces
+
+    # Evaluate objective (system health score)
+    current_value = objective(x, metrics)
+
+    # Check each force dimension
+    for i in range(5):
+        # Try increasing/decreasing this force
+        for direction in [-1, +1]:
+            x_new = x.copy()
+            x_new[i] += direction * step_size
+
+            # Check feasibility
+            if not satisfies_constraints(x_new, constraints):
+                continue
+
+            # Check improvement
+            new_value = objective(x_new, metrics)
+            if new_value > current_value:
+                return x_new  # Found improving direction
+
+    return x  # At local optimum, no improving moves
+```
+
+This is a discrete simplex-like search in force-space.
+
+### Limitations of the LP Analogy
+
+**Where it breaks down:**
+
+1. **Non-linearity**: Real objective function probably isn't linear. Velocity and quality might have interaction terms (velocity² hurts quality exponentially).
+2. **Dynamic constraints**: Constraints change over time (team capacity grows, backlog shifts). LP assumes static.
+3. **Multiple objectives**: Not just maximizing one value - multiple stakeholders have different preferences (Pareto optimality, not linear optimality).
+4. **Discrete vs continuous**: Force intensities might be discrete levels (Low/Med/High) not continuous real numbers.
+5. **Stochastic elements**: Agent behavior, bug rates, human understanding - all have randomness. LP is deterministic.
+
+**Better formulations:**
+
+- **Mixed-Integer Programming (MIP)** if forces are discrete levels
+- **Multi-objective Optimization** if balancing competing goals (velocity vs quality)
+- **Stochastic Programming** if incorporating uncertainty (agent failure rates, learning curves)
+- **Dynamic Programming** if considering time-evolution of system
+
+### Practical Applications
+
+**1. Profile Generator**
+
+Instead of hand-coding "Startup Profile" and "Enterprise Profile", use LP solver:
+
+```python
+# Startup: maximize velocity subject to minimum quality
+startup_profile = solve_lp(
+    objective="maximize velocity",
+    constraints=[
+        "quality >= 40%",
+        "coherence >= 30%",
+        "learning >= 20%",
+        "total_governance_time <= 2hr/day"
+    ]
+)
+
+# Enterprise: maximize reliability subject to reasonable velocity
+enterprise_profile = solve_lp(
+    objective="maximize (quality + coherence)",
+    constraints=[
+        "velocity >= 50% of max",
+        "learning >= 60%",
+        "total_governance_time <= 8hr/day"
+    ]
+)
+```
+
+**2. Constraint Diagnosis**
+
+If system is unhealthy (can't find equilibrium):
+```python
+result = solve_lp(objective, constraints)
+if result.status == "infeasible":
+    # Which constraints are conflicting?
+    relaxed = solve_relaxed_lp(objective, constraints)
+    print(f"To achieve equilibrium, must relax: {relaxed.binding_constraints}")
+```
+
+Example output: `"Cannot maintain velocity=8 AND quality=9 with only 4hr/day governance time. Either reduce velocity to 6, or increase time to 6hr/day."`
+
+**3. What-If Analysis**
+
+```python
+# Current equilibrium
+baseline = current_equilibrium()
+
+# Scenario: double the agent count (2x velocity potential)
+scenario_1 = solve_lp(
+    objective,
+    constraints + ["max_velocity = 2 * baseline.max_velocity"]
+)
+
+# How do other forces need to adjust?
+print(f"To handle 2x agents:")
+print(f"  Quality force: {baseline.quality} → {scenario_1.quality}")
+print(f"  Coherence force: {baseline.coherence} → {scenario_1.coherence}")
+print(f"  Governance time: {baseline.time} → {scenario_1.time}")
+```
+
+### Connection to Tensegrity Structures
+
+Physical tensegrity structures can also be modeled as optimization problems:
+
+**Form-finding problem:**
+```
+minimize: total_potential_energy
+subject to:
+  - force equilibrium at each node (ΣF = 0)
+  - tension members under tension only (T > 0)
+  - compression members under compression only (C < 0)
+  - geometric constraints (connectivity, member lengths)
+```
+
+This is actually a **nonlinear programming** problem (energies involve squared terms), but the principle is the same: find configuration that minimizes energy (equilibrium) subject to structural constraints.
+
+Algorithms:
+- **Dynamic relaxation**: Iteratively adjust node positions to reduce force imbalance (like gradient descent)
+- **Force density method**: Reformulate as linear system of equations (makes it LP-solvable!)
+- **Genetic algorithms**: If problem is non-convex with many local minima
+
+### Research Directions
+
+**1. Formal Governance Optimization**
+
+Define precise objective function and constraints for Tensegrity governance. Use LP/MIP solvers to compute optimal force settings. Build UI that exposes constraints as tunable parameters, shows feasible region, lets human explore tradeoff space.
+
+**2. Real-time Equilibrium Control**
+
+Run LP solver in background, continuously recomputing optimal forces as metrics change. Suggest adjustments to human: "Coupling increasing - recommend: coherence force 6→7, or quality force 8→9."
+
+**3. Constraint Learning**
+
+Use machine learning to learn constraint functions from observed data:
+- "What's the actual relationship between velocity force and cycle time?"
+- "How does learning force intensity affect human understanding score?"
+- Build empirical constraint model, use in LP solver for better tuning.
+
+**4. Multi-Agent Market Equilibrium**
+
+View agents as economic actors in a market:
+- Agents bid for tasks based on capability match
+- Task prices (priorities) adjust based on supply/demand
+- Market equilibrium = tensegrity equilibrium
+- LP duality: primal (agent allocation) ↔ dual (task prices)
+
+This is **mechanism design** - designing markets/incentives for multi-agent systems.
+
+### Further Reading
+
+**Linear Programming & Simplex:**
+- Dantzig, G. (1963). *Linear Programming and Extensions*. Princeton University Press.
+- Vanderbei, R. (2020). *Linear Programming: Foundations and Extensions*. Springer.
+
+**Tensegrity Form-Finding:**
+- Tibert, G., & Pellegrino, S. (2003). Review of form-finding methods for tensegrity structures. *IJSS*, 40(23), 6189-6221.
+- Zhang, J., & Ohsaki, M. (2015). *Tensegrity Structures: Form, Stability, and Symmetry*. Springer.
+
+**Multi-Objective Optimization:**
+- Ehrgott, M. (2005). *Multicriteria Optimization*. Springer.
+- Marler, R. T., & Arora, J. S. (2004). Survey of multi-objective optimization methods for engineering. *Structural and Multidisciplinary Optimization*, 26(6), 369-395.
+
+**Mechanism Design (Agent Markets):**
+- Nisan, N., et al. (2007). *Algorithmic Game Theory*. Cambridge University Press.
+- Varian, H. (1995). Economic mechanism design for computerized agents. *USENIX*.
+
+---
+
+*This theoretical exploration shows Tensegrity isn't just a metaphor - it's mathematically grounded in optimization theory. The simplex algorithm's vertex-walking mirrors how systems find force equilibrium. If we formalize governance as LP, we unlock decades of optimization research and computational tools.*
