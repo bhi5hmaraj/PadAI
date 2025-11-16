@@ -18,7 +18,7 @@ This isn't a hypothetical future problem. Early adopters are already hitting thi
 
 There are so many moving parts. The key is to **focus on contracts first, then details fall into place.**
 
-![Component Contracts](../assets/images/component-contracts.png)
+![Component Contracts](../assets/images/component-contracts.svg)
 *Component interactions showing clear contract boundaries*
 
 **Main components:**
@@ -62,7 +62,7 @@ Traditional process (design docs, RFCs, CI) slows things down for small projects
 
 **Analogy:** Tensegrity structures - held stable by multiple opposing forces, not rigid components.
 
-![Tensegrity Forces](../assets/images/tensegrity-forces.png)
+![Tensegrity Forces](../assets/images/tensegrity-forces.svg)
 *Five forces in equilibrium with human tuning controls*
 
 **Forces in play:**
@@ -97,7 +97,7 @@ Traditional process (design docs, RFCs, CI) slows things down for small projects
 
 ### The Knowledge Representation Gap
 
-![Knowledge Gap](../assets/images/knowledge-gap.png)
+![Knowledge Gap](../assets/images/knowledge-gap.svg)
 *How representations diverge over time without governance*
 
 **Three representations of the system:**
@@ -238,7 +238,7 @@ Quality governance exists (CI/CD, test coverage tools). Coherence governance exi
 
 ## Tensegrity's Governance Capabilities
 
-![Governance Challenge](../assets/images/governance-challenge.png)
+![Governance Challenge](../assets/images/governance-challenge.svg)
 *Multi-dimensional governance: traditional approaches vs Tensegrity solutions*
 
 **Tensegrity provides five categories of governance infrastructure:**
