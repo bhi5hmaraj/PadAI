@@ -47,7 +47,38 @@ But faster execution creates new challenges:
 
 **The infrastructure wave:** With Stargate's $500B investment (completion expected end of 2025), agent-scale compute arrives in 12-18 months. Teams without governance infrastructure will drown. Teams with Tensegrity will compound advantages.
 
-**The acceleration:** Recent breakthroughs in inference scaling (test-time compute) and multi-agent systems mean capability jumps happen continuously, not just at model releases. METR research shows agent task horizons doubling every 7 months - by Q4 2025, agents will reliably complete 1-hour expert tasks. Combined with multi-agent architectures (AlphaEvolve, AI co-scientist), this accelerates the timeline by 6 months. Mainstream adoption of multi-agent workflows hits Q3 2025, not Q1 2026. The governance crisis is closer than expected. See [Inference Scaling and Tensegrity](docs/design/inference_scaling_and_tensegrity.md) for detailed analysis.
+**The acceleration:** Recent breakthroughs in inference scaling (test-time compute) and multi-agent systems mean capability jumps happen continuously, not just at model releases. METR research shows agent task horizons doubling every 7 months - by Q4 2025, agents will reliably complete 1-hour expert tasks. Combined with multi-agent architectures (AlphaEvolve, AI co-scientist), this accelerates the timeline by 6 months. Mainstream adoption of multi-agent workflows hits Q3 2025, not Q1 2026. The governance crisis is closer than expected.
+
+### Timeline: Mainstream Adoption Arrives 6 Months Earlier
+
+![Timeline Acceleration](docs/assets/images/inference/timeline_acceleration.svg)
+
+**The shift**: Original projections based on Stargate timeline had mainstream adoption in Q1 2026. METR's empirical finding of 7-month task horizon doubling + inference scaling means mainstream adoption hits **Q3 2025** - just 9 months from now.
+
+### Agent Capabilities: Exponential Growth
+
+![Half-Life Progression](docs/assets/images/inference/half_life_progression.svg)
+
+**Current state** (late 2024): Agents reliably handle ~4-minute expert tasks at 50% success rate.
+
+**Q4 2025** (12 months): Agents handle 1-hour expert tasks - complete features with tests and documentation.
+
+**Q2 2026** (18 months): Agents handle 4-hour expert tasks - cross-module refactoring with architectural changes.
+
+This isn't linear improvement - it's **exponential**. Every 7 months, the task horizon doubles. By 2029-2031, agents could autonomously execute week-long projects.
+
+### The Economic Foundation: Why Governance Became the Bottleneck
+
+![Combined Economic Effects](docs/assets/images/economics/combined_effects.svg)
+
+When execution productivity jumps 10-100x (agents) but governance productivity stays flat (human review), two economic forces create a crisis:
+
+- **Jevons Paradox**: Cheap execution → more code written (not less governance)
+- **Baumol Cost Disease**: Governance becomes 70% of project costs (was 25%)
+
+**The result**: Governance burden explodes. Early adopters are experiencing this NOW. By Q3-Q4 2025, this becomes mainstream reality.
+
+See [Inference Scaling and Tensegrity](docs/design/inference_scaling_and_tensegrity.md) for detailed analysis.
 
 ---
 
@@ -69,6 +100,14 @@ But faster execution creates new challenges:
 ## How It Works
 
 ![Functional Overview](docs/assets/images/functional-overview.svg)
+
+### The Coordination Challenge: O(n²) Complexity
+
+![Multi-Agent Complexity](docs/assets/images/inference/multi_agent_complexity.svg)
+
+As you scale from 1 agent to 5 to 20, coordination complexity grows quadratically. With 20 agents, there are 190 potential connection points. Without governance infrastructure, chaos ensues.
+
+**Tensegrity provides**: Real-time observability across all agents, automated coordination through invariant enforcement, and equilibrium monitoring to detect when forces are out of balance.
 
 ### Observe
 Real-time visibility into all five forces:
@@ -93,6 +132,19 @@ Active learning primitives that keep human understanding synchronized:
 - **Experimental sandbox**: Safe environment to break things, test hypotheses, update mental model.
 
 **The insight from learning science:** You don't learn by having AI explain code. You learn by making predictions, testing them, and updating your model based on reality. This is deliberate practice for codebase understanding - grounded in decades of research on skill acquisition.
+
+#### Why Human Understanding Is Essential (Not Optional)
+
+![Adversarial Optimization](docs/assets/images/inference/adversarial_optimization.svg)
+
+**Lesson from AlphaEvolve** (Terence Tao + Google DeepMind): Agents aggressively exploit verification vulnerabilities. They optimize for passing tests, not for intent. Naive verification gets gamed.
+
+**Without human understanding:**
+- Can't detect when agents game metrics without improving quality
+- Can't design robust verification that resists exploitation
+- Can't combine AI candidates with domain expertise for hybrid solutions
+
+**The learning force is the defense mechanism** against adversarial optimization of governance infrastructure.
 
 ### Steer
 Tune equilibrium without micromanaging:
