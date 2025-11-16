@@ -429,6 +429,27 @@ Open an issue or discussion to share thoughts.
 
 ---
 
+## Theoretical Foundations
+
+For readers with theoretical CS and advanced math backgrounds, we've formalized Tensegrity's core problems and solutions using rigorous mathematical frameworks:
+
+**See [Mathematical Foundations](docs/design/mathematical_foundations.md)** for:
+
+- **Formal definitions**: State space, agent actions, governance policies, multi-agent systems
+- **Coordination complexity**: Proof that coordination is Θ(n²) without infrastructure (Theorem 2.1)
+- **Knowledge divergence**: Proof of unbounded growth without active learning (Theorem 3.1)
+- **Adversarial verification**: Game-theoretic analysis of agent-verifier dynamics (Theorem 4.1)
+- **LP formulation**: Equilibrium as constrained optimization, shadow price guidance (Theorem 5.2)
+- **Stability analysis**: Lyapunov functions proving convergence to equilibrium (Theorem 6.1)
+- **Complexity results**: NP-hardness of verification, PSPACE-completeness of consensus (Theorems 7.1, 7.3)
+- **Information theory**: Channel capacity bounds on knowledge transfer rate (Theorem 8.1)
+
+**Main result (Theorem 9.1)**: Tensegrity achieves bounded knowledge divergence, optimal resource allocation via LP duality, Lyapunov stability, polynomial-time governance, and O(n) coordination complexity.
+
+The mathematical treatment uses standard notation from optimization theory, control theory, information theory, and complexity theory. Structured as definitions → lemmas → theorems → proofs, following mathematical convention.
+
+---
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.

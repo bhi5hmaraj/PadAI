@@ -598,6 +598,15 @@ Quality governance exists (CI/CD, test coverage tools). Coherence governance exi
 
 ## References and Inspiration
 
+**Mathematical foundations:**
+- See `docs/design/mathematical_foundations.md` for rigorous theoretical treatment:
+  - Formal definitions (state space, agent actions, governance policy)
+  - Theorems with proofs (coordination complexity Θ(n²), unbounded knowledge divergence)
+  - LP formulation of equilibrium (shadow prices, optimal allocation)
+  - Stability analysis (Lyapunov functions, convergence guarantees)
+  - Information-theoretic bounds (knowledge transfer rates)
+  - Complexity results (NP-hardness of verification, PSPACE-completeness of consensus)
+
 **Inference scaling and timeline acceleration:**
 - See `docs/design/inference_scaling_and_tensegrity.md` for comprehensive analysis of:
   - METR half-life model (7-month doubling)
