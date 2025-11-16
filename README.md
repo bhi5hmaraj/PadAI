@@ -266,7 +266,7 @@ Response:
 
 ## 🤖 For Worker Agents
 
-If you're a Claude Code agent joining this project, see **[WORKER_GUIDE.md](WORKER_GUIDE.md)** for complete instructions.
+If you're a Claude Code agent joining this project, see **[docs/WORKER_GUIDE.md](docs/docs/WORKER_GUIDE.md)** for complete instructions.
 
 ### Quick Start for Workers
 
@@ -311,7 +311,7 @@ curl -s -X POST $PADAI_MASTER/api/create \
 
 ### Example Agent Workflow Script
 
-See `test-agent.sh` for a complete example:
+See `scripts/test-agent.sh` for a complete example:
 
 ```bash
 #!/bin/bash
@@ -375,7 +375,7 @@ On startup, the server logs the resolved configuration, including the detected `
 
 ### Railway
 
-1. Create `railway.json`:
+1. (Deprecated) Create `railway.json`:
 
 ```json
 {

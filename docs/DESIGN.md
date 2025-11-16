@@ -192,13 +192,13 @@ MVP is successful if:
   - Mini-map and controls for navigation
 
 - **Worker Integration:** Simple curl commands
-  - `WORKER_GUIDE.md` - Complete guide for worker agents
-  - `test-agent.sh` - Bash script for testing workflows
+  - `docs/docs/WORKER_GUIDE.md` - Complete guide for worker agents
+  - `scripts/test-agent.sh` - Bash script for testing workflows
   - No MCP needed - just HTTP + curl
 
-- **Deployment:** Docker + Railway ready
+- **Deployment:** Docker + Cloud Run ready
   - `Dockerfile` - Multi-stage build with bd CLI
-  - `railway.json` - One-click deployment config
+  - (Deprecated) `railway.json` - One-click Railway deployment
 
 **Stack choices:**
 - Python instead of Express (better alignment with beads-mcp for Phase 2)
