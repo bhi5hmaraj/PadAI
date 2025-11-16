@@ -549,6 +549,21 @@ Tensegrity doesn't micromanage. It defines invariants and monitors equilibrium. 
 - Don't approve small PRs → Auto-merge if all invariants pass
 - Don't dictate architecture → Enforce architectural constraints, let agents design within them
 
+### For Tensegrity: Learning as Adaptive Force, Not Fixed Burden
+
+Active learning requirements are not static overhead - they're a tunable force in the equilibrium system. The system adjusts learning intensity based on observed metrics and context.
+
+**Principle:** Learning force scales with risk and adapts to human capacity. Too heavy and velocity suffers; too light and knowledge divergence creates invisible tech debt.
+
+**Adaptive mechanisms:**
+- **Completion rate feedback**: If humans skip 80% of challenges, system auto-reduces frequency
+- **Knowledge gap alerts**: High change rate + low understanding = automatically surface targeted challenges
+- **Context-based tuning**: Startup profile (learning dial: 2/10), Enterprise profile (learning dial: 8/10)
+- **Performance-based adjustment**: Humans crushing challenges at 90% accuracy → increase difficulty and depth
+- **Velocity monitoring**: If cycle time increases 2x after adding challenges → reduce challenge frequency
+
+**Result:** Learning overhead self-regulates. System finds equilibrium where human understanding keeps pace with agent execution without becoming a bottleneck. This is fundamentally different from static code review, which doesn't adapt to load or effectiveness.
+
 ### For Both: Observability First
 
 You can't steer what you can't see. Every action, every state change, every decision should be observable.
@@ -710,8 +725,103 @@ PadAI + Tensegrity provide the missing layer. They enable agent scale while main
 
 If we get this right, software evolution accelerates by an order of magnitude while humans stay in the loop with real comprehension. If we don't, agent-generated codebases become unmaintainable messes managed by humans who don't understand what they're approving. The stakes are high.
 
+## Empirical Evidence and Timing
+
+### The Problem Exists Today
+
+Agent-scale development is not speculative - it's happening now among early adopters pushing AI coding tools to their limits.
+
+**Field reports from practitioners:**
+- A developer managing 6 months of intensive Claude Code usage across 50+ projects reports challenges maintaining mental models, tracking changes across parallel agent work, and coordinating multiple agents effectively ([Reddit: Claude Code is a beast](https://www.reddit.com/r/ClaudeAI/comments/1oivjvm/claude_code_is_a_beast_tips_from_6_months_of/))
+- These power users are already experiencing the coordination and knowledge divergence problems PadAI + Tensegrity solve
+
+**AI code generation has crossed the adoption threshold:**
+- Over 15 million developers using GitHub Copilot by early 2025 (400% growth in 12 months)
+- 63% of professional developers currently use AI in development, with another 14% planning to adopt soon (Stack Overflow 2024 Developer Survey)
+- Copilot now writes nearly half of a developer's code on average (46%), with Java developers seeing up to 61% AI-generated code
+- Developers accept ~30% of AI suggestions and keep 88% of AI-generated code in final submissions
+- Code velocity: Copilot users reduce time-to-PR from 9.6 days to 2.4 days (55% faster)
+
+Sources: [LinearB Blog on Copilot ROI](https://linearb.io/blog/is-github-copilot-worth-it), [GitHub Research with Accenture](https://github.blog/news-insights/research/research-quantifying-github-copilots-impact-in-the-enterprise-with-accenture/), [Copilot Usage Statistics 2025](https://www.wearetenet.com/blog/github-copilot-usage-data-statistics)
+
+**Code quality concerns emerging:**
+- AI-generated code has 41% higher churn rate than human-written code, indicating lower initial quality and more frequent revisions
+- This validates the governance thesis: velocity without quality gates creates technical debt
+
+Source: [GitClear AI Code Quality Research 2025](https://www.gitclear.com/ai_assistant_code_quality_2025_research)
+
+### Agent-Scale Infrastructure is Imminent
+
+The industry is making $500B+ bets on agent-scale compute infrastructure arriving in the next 1-4 years.
+
+**Stargate Project:** $500 billion investment over 4 years building AI infrastructure for OpenAI in the United States, with $100 billion deployed immediately. Partnership between SoftBank, OpenAI, Oracle, and UAE's MGX fund. Construction began January 2025 in Abilene, Texas, with completion expected before end of 2025. Expansion to 7 gigawatts of planned capacity across multiple US sites.
+
+**This is not a bet on "maybe agents will be useful someday."** This is infrastructure for agent-scale compute as the next platform. When this capacity comes online, agent velocity will increase 10x+ overnight.
+
+Source: [OpenAI Stargate Announcement](https://openai.com/index/announcing-the-stargate-project/), [CNN Business on Stargate](https://www.cnn.com/2025/01/21/tech/openai-oracle-softbank-trump-ai-investment)
+
+**Timeline:** We're not building for a problem 5 years out. Early adopters are hitting these pain points today. In 12-18 months, as Stargate infrastructure comes online, this becomes mainstream.
+
+### Scientific Backing for Active Learning Approach
+
+The active learning primitives in Tensegrity are grounded in established learning science, not speculation.
+
+**Deliberate practice theory (Ericsson et al., 1993):**
+- Individual differences in expert performance are closely related to accumulated deliberate practice - activities specifically designed to improve performance through mindful repetition and feedback
+- Key characteristics: individualized training, immediate feedback, pushing beyond comfort zone, performance-focused rather than enjoyment-focused
+- Applies across domains from athletics to music to intellectual skills
+
+"Deliberate practice is not inherently enjoyable. Individuals are motivated to practice because practice improves performance." - Ericsson, Krampe, & Tesch-Römer (1993)
+
+Sources: [Original Deliberate Practice Paper](https://www.ida.liu.se/~nilda08/Anders_Ericsson/Ericsson_delib_pract.pdf), [Royal Society review of deliberate practice research](https://royalsocietypublishing.org/doi/10.1098/rsos.190327)
+
+**Active retrieval and spaced repetition:**
+- Retrieval practice (actively recalling information from memory) enhances learning far more than passive rereading or recognition
+- Spacing effect: Practicing skills distributed over time is more effective than massed practice in single sessions
+- Cognitive load theory: Spacing allows cognitive resources to replenish, preventing overload and enabling deeper processing
+- Mechanism: Attempting to recall fuzzy memories triggers effortful reconstruction of retrieval pathways, strengthening long-term encoding
+
+"Over time, memories decay and become less accessible; by attempting to relearn something after a period of time we are actually reconstructing the information itself and the pathways that lead to it." - Educational research on spacing effects
+
+Sources: [Australian Education Research on Spacing & Retrieval](https://www.edresearch.edu.au/summaries-explainers/explainers/spacing-retrieval), [NIH research on spaced learning mechanisms](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5126970/)
+
+**Application to Tensegrity:**
+- **Prediction challenges** = deliberate practice for architectural reasoning
+- **Comprehension sampling** = spaced retrieval practice on codebase knowledge
+- **Experimental sandbox** = immediate feedback loop for hypothesis testing
+- **Knowledge gap tracking** = individualized training based on performance assessment
+
+The system operationalizes learning science principles that have decades of empirical validation. This is not "gamification" or "engagement tricks" - it's applying evidence-based pedagogy to the problem of human comprehension at agent velocity.
+
+### Why Now is the Right Time
+
+**Not too early:** Problem exists for power users today. Early adopters are already experiencing coordination chaos and knowledge divergence with current AI coding tools.
+
+**Not too late:** Solutions aren't ossified. No established patterns for multi-agent coordination or human learning at agent velocity. Opportunity to define the paradigm.
+
+**Infrastructure wave incoming:** Stargate and similar investments will create 10x agent velocity increase in 12-24 months. Teams without governance + learning infrastructure will drown. Those with PadAI + Tensegrity will compound advantages.
+
+**Market timing:** Target early adopters using Claude Code / Cursor / Copilot at scale NOW. They're feeling the pain. In 12-18 months, this becomes everyone's problem. Be the solution before they know they need it.
+
 ---
 
 **PadAI: Coordination infrastructure for multi-agent teams.**
 **Tensegrity: Governance for stable evolution at agent scale.**
 **Together: The control system for high-velocity development.**
+
+## References
+
+**AI Infrastructure & Adoption:**
+- OpenAI. (2025). Announcing The Stargate Project. https://openai.com/index/announcing-the-stargate-project/
+- LinearB. (2024). Is GitHub Copilot worth it? ROI & productivity data. https://linearb.io/blog/is-github-copilot-worth-it
+- GitHub. (2024). Research: Quantifying GitHub Copilot's impact in the enterprise with Accenture. https://github.blog/news-insights/research/research-quantifying-github-copilots-impact-in-the-enterprise-with-accenture/
+- GitClear. (2025). AI Copilot Code Quality: 2025 Data Suggests 4x Growth in Code Clones. https://www.gitclear.com/ai_assistant_code_quality_2025_research
+
+**Learning Science:**
+- Ericsson, K. A., Krampe, R. T., & Tesch-Römer, C. (1993). The role of deliberate practice in the acquisition of expert performance. Psychological Review, 100(3), 363-406.
+- Macnamara, B. N., & Maitra, M. (2019). The role of deliberate practice in expert performance: revisiting Ericsson, Krampe & Tesch-Römer (1993). Royal Society Open Science, 6(8), 190327.
+- Australian Education Research Organisation. (2024). Spacing and retrieval. https://www.edresearch.edu.au/summaries-explainers/explainers/spacing-retrieval
+- Smolen, P., Zhang, Y., & Byrne, J. H. (2016). The right time to learn: mechanisms and optimization of spaced learning. Nature Reviews Neuroscience, 17(2), 77-88.
+
+**Practitioner Reports:**
+- Reddit /r/ClaudeAI. (2024). Claude Code is a beast: Tips from 6 months of experience managing 50+ projects. https://www.reddit.com/r/ClaudeAI/comments/1oivjvm/claude_code_is_a_beast_tips_from_6_months_of/
