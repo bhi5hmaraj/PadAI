@@ -34,19 +34,26 @@ There are so many moving parts. The key is to **focus on contracts first, then d
 
 **North star for product decisions:** What are we solving? As agents scale and get better at execution, we need stable evolution of infrastructure even with many agents working together.
 
-### 2. Nuclear Reactor Control Rods
+### 2. Nuclear Reactor Control Rods - Governance as the New Bottleneck
 
 Execution is no longer the bottleneck - **agents handle that now**.
 
-The new bottleneck: **How fast can the governance layer catch up and keep execution in check?**
+**The new bottleneck: How fast can the governance layer keep pace with execution?**
 
-Think of it as **control rods in a nuclear reactor** to keep the reaction sustained, not runaway.
+Think of it as **control rods in a nuclear reactor** to keep the reaction sustained, not runaway. The goal isn't to slow agents down - it's to **govern at agent velocity to get the best of both worlds**.
 
-Traditional process (design docs, RFCs, CI) slows things down for small projects where execution matters most. But when agents do execution, the balance shifts:
-- Execution speed: Agent-driven, very fast
-- Governance speed: Human-driven, needs acceleration
+Traditional process (design docs, RFCs, CI) slows things down for small projects where execution matters most. But when agents do execution, the balance fundamentally shifts:
+- **Execution speed**: Agent-driven, very fast (10-100x human)
+- **Governance speed**: Still human-driven, lags behind
 
-**The insight:** Most people avoid heavy process because execution is precious. Now execution is abundant. The constraint is governance that keeps quality, coherence, and understanding synchronized with velocity.
+**The key insight:** Most people avoid heavy process because execution is precious. Now **execution is abundant, governance is scarce**. The constraint is governance infrastructure that keeps quality, coherence, and understanding synchronized with velocity.
+
+**Tensegrity's role:** Provide governance that scales to agent velocity. Not slowing agents down to human review speed, but accelerating governance to match agent execution speed through:
+- Automated invariant enforcement (not manual review)
+- Real-time equilibrium monitoring (not periodic audits)
+- Adaptive gates that tune based on metrics (not fixed thresholds)
+- Active learning primitives that accelerate human understanding (not passive explanations)
+- Human steering of forces, not individual decisions
 
 ### 3. Tensegrity: Stability Through Balanced Forces
 
@@ -120,28 +127,45 @@ Traditional process (design docs, RFCs, CI) slows things down for small projects
 - No community, no battle-testing
 - **It's YOUR codebase that you don't understand**
 
-### Tensegrity's Role: Accelerate Human Learning
+### Tensegrity's Role: Multi-Dimensional Governance at Agent Scale
 
-**Core aim:** Reduce error between ground truth, AI representation, and human representation. Do this fast and scalably.
+**Core aim:** Provide governance infrastructure that keeps all five forces (velocity, quality, coherence, learning, scope) in sustainable equilibrium as agent execution accelerates.
 
-**The challenge:** How do we accelerate human learning to keep pace with agent execution?
-- Not to review every line
-- But to maintain sufficient understanding for strategic decisions
-- To recognize when something is fundamentally wrong
-- To guide system evolution
+**The governance challenge is multi-dimensional:**
 
-**Why traditional approaches fail:**
-- Code review at 100 PRs/day is impossible
+1. **Quality Governance**: How do we maintain test coverage, reliability, correctness when submissions arrive 10x faster?
+   - Traditional: Manual code review (doesn't scale to 100 PRs/day)
+   - Tensegrity: Automated invariant enforcement, adaptive quality gates
+
+2. **Coherence Governance**: How do we prevent architectural fragmentation when no single agent understands the whole system?
+   - Traditional: Architecture review boards (too slow)
+   - Tensegrity: Real-time coupling metrics, automated architectural constraint checking
+
+3. **Learning Governance**: How do we keep human understanding synchronized with rapidly evolving codebase?
+   - Traditional: Documentation, AI explanations (passive, goes stale)
+   - Tensegrity: Active learning primitives, knowledge gap tracking
+
+4. **Equilibrium Governance**: How do we balance velocity vs. quality vs. coherence vs. learning for our context?
+   - Traditional: Fixed policies (startup same as enterprise)
+   - Tensegrity: Tunable force profiles, adaptive mechanisms
+
+**Why traditional approaches fail at agent scale:**
+- Code review doesn't scale to 100 changes/day
+- Architecture boards create bottlenecks
 - Documentation goes stale immediately
-- AI-generated explanations are passive consumption
-- Creates illusion of understanding without actual learning
-- Pairing with agents doesn't work like pairing with humans
+- Quality gates are binary (pass/fail) not adaptive
+- No visibility into equilibrium state across dimensions
+- Governance is reactive (catch failures) not proactive (prevent problems)
 
-## Active Learning: The Solution
+## Active Learning: The Learning Force in Tensegrity
+
+**Among the five governance forces, the learning force is particularly novel because existing tools don't address it at all.**
+
+Quality governance exists (CI/CD, test coverage tools). Coherence governance exists (linters, architectural analysis tools). But **learning governance** - keeping human understanding synchronized with agent-generated code - has no existing solution.
 
 **Core insight from learning science (Justin Skycak, Math Academy):**
 
-**Learning requires active retrieval, not passive consumption.**
+**Learning requires active retrieval, not passive consumption.** This principle, grounded in decades of research, provides the foundation for Tensegrity's learning primitives.
 
 ### What Doesn't Work
 
@@ -202,6 +226,48 @@ Traditional process (design docs, RFCs, CI) slows things down for small projects
 - Stargate Project: $100B capex, coming online next year
 - Agent velocity will increase 10x+ when this capacity hits
 - Timeline: 12-18 months to mainstream, not 5 years
+
+## Tensegrity's Governance Capabilities
+
+**Tensegrity provides five categories of governance infrastructure:**
+
+### 1. Invariant Enforcement
+- Define rules that must hold (test coverage thresholds, API stability, dependency constraints, performance budgets, security requirements)
+- Automated checking on every submission
+- Violations block merge or trigger human review
+- Fast feedback to agents (not hours-long review queues)
+
+### 2. Equilibrium Monitoring
+- Track system-level metrics across all five forces:
+  - **Velocity**: tasks/day, cycle time, throughput
+  - **Quality**: test coverage, bug escape rate, test pass rate
+  - **Coherence**: coupling metrics, architectural violations, complexity trends
+  - **Learning**: human understanding scores, knowledge gap alerts, prediction accuracy
+  - **Scope**: backlog size, priority shifts, deadline pressure
+- Real-time dashboards showing equilibrium state (healthy, degrading, unstable)
+- Historical trends and anomaly detection
+
+### 3. Automated Gates
+- Integration with CI/CD pipelines
+- Static analysis for architectural violations
+- Performance testing against budgets
+- Security scanning
+- Fast pass/fail with specific violation details
+
+### 4. Human Steering Dashboard
+- Real-time view of equilibrium across all forces
+- Alerts when metrics degrade beyond thresholds
+- Controls to adjust invariant rules and force intensities
+- Approve/block submissions that need judgment
+- Tune equilibrium profiles (Startup, Enterprise, OSS)
+
+### 5. Feedback Loops
+- When submissions fail, agents get specific guidance (not vague rejections)
+- Pattern libraries help agents learn conventions
+- Over time, agents improve based on feedback
+- Active learning challenges for humans (prediction, comprehension, experimentation)
+
+**The key insight:** Governance isn't about slowing agents down to human review speed. It's about **automating governance to match agent velocity** while keeping humans in the loop at strategic decision points.
 
 ## Product Philosophy: Observability + Steerability
 
@@ -337,13 +403,13 @@ Traditional process (design docs, RFCs, CI) slows things down for small projects
 ## What We Believe
 
 **Thesis:**
-1. Agent execution will scale 10-100x in next 12-24 months
-2. Coordination and governance become the bottleneck
-3. Knowledge divergence (human not understanding codebase) is the silent killer
-4. Active learning is the only scalable solution to knowledge gap
-5. Tensegrity model (balanced forces) enables stable rapid evolution
-6. Early adopters are experiencing this pain RIGHT NOW
-7. In 12-18 months, this becomes mainstream problem
+1. Agent execution will scale 10-100x in next 12-24 months (Stargate, infrastructure investments)
+2. **Governance keeping pace with execution becomes the bottleneck**
+3. Multi-dimensional governance challenge: quality + coherence + learning + equilibrium tuning
+4. Knowledge divergence (human not understanding codebase) is particularly insidious because it's invisible
+5. Tensegrity model (balanced forces) enables stable rapid evolution at agent scale
+6. Early adopters are experiencing coordination and governance pain RIGHT NOW
+7. In 12-18 months, this becomes mainstream problem for all teams using AI coding tools
 
 **If we're right:**
 - Teams with PadAI + Tensegrity move 10-100x faster than those without
@@ -379,29 +445,32 @@ Traditional process (design docs, RFCs, CI) slows things down for small projects
 ## Final Thoughts
 
 **This is fundamentally an exercise in:**
-- How we build reliable systems when change accelerates
-- How we keep human understanding synchronized with AI execution
-- How we prevent invisible tech debt from accumulating
-- How we maintain strategic control while delegating tactical execution
+- How we build reliable systems when change accelerates 10-100x
+- **How we make governance scale to match execution velocity**
+- How we balance velocity, quality, coherence, learning, and scope in real-time
+- How we maintain strategic control while delegating tactical execution to agents
+- How we prevent invisible degradation (tech debt, knowledge gaps, coupling)
 
 **The opportunity:**
-- No one else is addressing the epistemological problem
-- No established patterns for multi-agent coordination + governance
+- **No one else is solving governance at agent scale** - existing tools assume human bottleneck
+- No established patterns for multi-agent coordination + multi-dimensional governance
+- **Particularly** no one addressing learning governance (human understanding keeping pace)
 - Infrastructure wave (Stargate) makes this urgent in 12-18 months
 - Early adopters are already in pain, no good solutions exist
 
 **The challenge:**
-- We're proposing behavior change (active learning vs. passive review)
-- Hard to measure understanding
-- Hard to balance learning overhead with velocity
-- Need to prove this works before mainstream adoption
+- We're proposing new paradigm: governance that scales to agent velocity (not slowing agents to human speed)
+- Multi-dimensional problem: quality + coherence + learning + equilibrium
+- Hard to measure some dimensions (understanding, architectural health)
+- Need to prove adaptive governance works better than fixed policies
+- Behavior change required: humans steering forces, not reviewing individual changes
 
 **The conviction:**
-- Agent scale is inevitable
-- Coordination and understanding are the real problems
-- Active learning is grounded in decades of research
-- Tensegrity model is elegant and generalizable
-- Timing is right: not too early, not too late
+- Agent scale is inevitable (Stargate, $500B investment proves it)
+- **Governance at agent velocity is THE problem** - coordination, quality, coherence, learning
+- Tensegrity model (balanced forces) is elegant, generalizable, grounded in real structures
+- Active learning force is grounded in decades of learning science research
+- Timing is right: early adopters feel pain now, mainstream in 12-18 months
 
 ---
 

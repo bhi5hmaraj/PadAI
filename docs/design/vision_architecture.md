@@ -4,7 +4,11 @@
 
 As AI agents become increasingly capable at code execution, we face a new challenge: **How do we maintain stable, coherent codebases when change velocity accelerates by 10-100x?**
 
-Traditional development assumes humans are the bottleneck in execution. We optimize for developer productivity - better IDEs, faster builds, code generation tools. But with autonomous agents, execution is no longer the constraint. The new bottleneck is **coordination and governance at scale**.
+Traditional development assumes humans are the bottleneck in execution. We optimize for developer productivity - better IDEs, faster builds, code generation tools. But with autonomous agents, execution is no longer the constraint.
+
+**The new bottleneck is governance keeping pace with execution.**
+
+When agents can write code 10-100x faster than humans, the constraint shifts from "how fast can we execute?" to "how fast can we govern?" The challenge is getting the best of both worlds: **agent velocity + human governance at sustainable equilibrium**.
 
 When 10-20 agents work simultaneously on a codebase:
 - They make conflicting changes to the same modules
@@ -187,7 +191,9 @@ Tensegrity sits on top of PadAI and adds the governance layer. It embodies princ
 - Risk management (blast radius limits, gradual rollout)
 - **Human understanding requirements** (comprehension challenges before approving large changes, knowledge gap alerts)
 
-Tensegrity is governance. It embodies the control rods that keep the reaction sustained. Different Tensegrity configurations create different equilibrium points - move fast with minimal gates, or move carefully with extensive checks. **Critically, it prevents the knowledge divergence problem by making active learning a first-class primitive, not an afterthought.**
+**Tensegrity is governance.** It embodies the control rods that keep the reaction sustained - balancing velocity, quality, coherence, learning, and scope. Different Tensegrity configurations create different equilibrium points: startups move fast with minimal gates, enterprises enforce comprehensive checks, open source projects optimize for community trust.
+
+**The core insight:** When execution is abundant (agents), governance becomes the constraint. Tensegrity provides governance infrastructure that scales with agent velocity, keeping all five forces in healthy equilibrium.
 
 ## The Contract Boundaries
 
@@ -708,22 +714,44 @@ The pattern becomes common: when you need many autonomous agents to work togethe
 
 ## Why This Matters
 
-AI agents will get better at execution. The constraint isn't coding ability anymore - it's coordination, governance, and **human understanding at velocity**. Teams that solve multi-agent governance AND the knowledge representation problem will move 10-100x faster than teams that don't.
+AI agents will get better at execution. The constraint isn't coding ability anymore - **it's governance keeping pace with agent velocity**. Teams that solve multi-agent governance will move 10-100x faster than teams that don't.
 
-Current approaches don't scale:
+**Current approaches don't scale:**
 - Single-agent systems (GitHub Copilot, Cursor) don't coordinate multiple agents
-- CI/CD catches failures but doesn't prevent them or guide agents
-- Code review doesn't scale to 100 changes/day
-- Microservices enable parallel work but don't govern coherence
-- **AI explanations create illusion of understanding without actual learning**
-- **Passive documentation becomes stale immediately at agent velocity**
-- **Humans become managers of code they don't understand - invisible tech debt accumulates**
+- CI/CD catches failures but doesn't prevent them or guide agents proactively
+- Code review doesn't scale to 100 changes/day - humans can't keep up
+- Microservices enable parallel work but don't govern coherence across boundaries
+- Quality gates (tests, coverage) exist but aren't adaptive to agent velocity
+- AI explanations create illusion of understanding without actual learning
+- Passive documentation becomes stale immediately at agent velocity
+- No infrastructure for balancing velocity vs. quality vs. coherence in real-time
 
-The epistemological problem is the silent killer. Agents write code faster than humans build mental models. The knowledge gap grows until the human can't make good architectural decisions, can't recognize fundamental issues, can't debug unexpected failures. The codebase becomes a black box maintained by AI, guided by a human who's flying blind. This is already happening with complex frameworks, but now it's YOUR codebase that you don't understand.
+**The governance challenge is multi-dimensional:**
 
-PadAI + Tensegrity provide the missing layer. They enable agent scale while maintaining coherence **and human understanding**. PadAI provides coordination infrastructure. Tensegrity provides governance PLUS active learning primitives that keep human mental models synchronized with ground truth. This is infrastructure for the next era of software development - where agents are first-class participants and humans steer with actual understanding, not guesswork.
+1. **Coordination**: How do you prevent 20 agents from conflicting, duplicating work, or breaking each other's changes?
+2. **Quality**: How do you maintain test coverage, correctness, and reliability when submissions arrive 10x faster?
+3. **Coherence**: How do you prevent architectural fragmentation when no single agent understands the whole system?
+4. **Learning**: How do you keep human understanding synchronized with rapidly evolving codebase?
+5. **Equilibrium**: How do you tune the balance between these forces for your context (startup, enterprise, OSS)?
 
-If we get this right, software evolution accelerates by an order of magnitude while humans stay in the loop with real comprehension. If we don't, agent-generated codebases become unmaintainable messes managed by humans who don't understand what they're approving. The stakes are high.
+**The epistemological problem (human understanding lag) is particularly insidious** because it's invisible. Quality degradation shows up in test failures. Architectural decay shows up in coupling metrics. But knowledge divergence is silent until the human makes a catastrophically bad decision because they don't understand the system they're governing. Agents write code faster than humans build mental models. The codebase becomes a black box maintained by AI, guided by a human who's flying blind.
+
+**PadAI + Tensegrity provide the missing governance layer.**
+
+PadAI solves coordination: observability and steerability for multi-agent teams.
+
+Tensegrity solves governance at scale: it keeps all five forces (velocity, quality, coherence, learning, scope) in sustainable equilibrium. It provides:
+- **Invariant enforcement** that scales to agent velocity (automated gates, not manual review)
+- **Equilibrium monitoring** that shows when forces are out of balance
+- **Adaptive mechanisms** that tune governance based on metrics and context
+- **Active learning primitives** that keep human understanding synchronized with ground truth
+- **Human steering dashboard** for adjusting forces without micromanaging
+
+This is infrastructure for the next era of software development - where agents execute at 10-100x human velocity, and governance scales to match. Where humans steer with actual understanding, not blind trust. Where quality, coherence, and velocity aren't trade-offs but balanced forces in healthy equilibrium.
+
+**If we get this right:** Software evolution accelerates by an order of magnitude while remaining stable, coherent, and human-understood.
+
+**If we don't:** Agent-generated codebases become unmaintainable messes - fast execution, broken architecture, invisible tech debt, humans who don't understand what they're approving.
 
 ## Empirical Evidence and Timing
 
