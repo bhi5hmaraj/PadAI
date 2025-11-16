@@ -8,6 +8,26 @@ When AI agents can write code 10-100x faster than humans, the bottleneck shifts 
 
 ---
 
+## Preparation Over Action
+
+> "Give me six hours to cut down a tree, and I will spend the first four sharpening my axe."
+> — Abraham Lincoln
+
+> "Civilization advances by extending the number of important operations which we can perform without thinking of them."
+> — Alfred North Whitehead
+
+Lincoln reminds us that preparation determines success. Whitehead shows us that progress comes from automating what was once hard, freeing our minds for higher-order thinking.
+
+**Tensegrity applies both principles to agent-scale development:**
+
+**Sharpen the axe before scaling agents.** Deploy governance infrastructure BEFORE your agents multiply. Trying to add governance after 20 agents are already running is like sharpening an axe mid-swing - chaotic, dangerous, and inefficient. Install Tensegrity early when you have 2-3 agents. When you scale to 20, the governance is already in place.
+
+**Automate governance to free human cognition.** Agents automate code execution - that's obvious. Tensegrity automates governance (quality gates, architecture checks, coupling metrics) so humans can think at a higher level. Instead of reviewing 100 PRs/day, humans tune equilibrium forces and make strategic architectural decisions. The important operations (invariant checking, coverage validation) happen automatically, freeing cognitive capacity for what matters: where is the system going?
+
+This is the shift: from reviewing code to steering systems. From inspecting implementations to tuning forces.
+
+---
+
 ## The Problem
 
 AI agents are getting dramatically better at code execution:
@@ -23,6 +43,10 @@ But faster execution creates new challenges:
 
 **The insight:** When execution is abundant, governance becomes scarce. You need infrastructure that scales governance to match agent velocity.
 
+**Real-world evidence:** Early adopters managing 6 months of intensive Claude Code usage across 50+ projects already report challenges maintaining mental models, tracking changes across parallel agent work, and coordinating multiple agents effectively. This isn't a future problem - it's happening now.
+
+**The infrastructure wave:** With Stargate's $500B investment (completion expected end of 2025), agent-scale compute arrives in 12-18 months. Teams without governance infrastructure will drown. Teams with Tensegrity will compound advantages.
+
 ---
 
 ## Core Concept: Tensegrity
@@ -30,11 +54,11 @@ But faster execution creates new challenges:
 [Tensegrity](https://en.wikipedia.org/wiki/Tensegrity) structures achieve stability through balanced opposing forces, not rigid control. Applied to software development:
 
 **Five Forces in Equilibrium:**
-1. **⚡ Velocity** - Agents ship fast, complete tasks, maximize throughput
-2. **🛡️ Quality** - Tests pass, coverage met, bugs minimized
-3. **🏗️ Coherence** - Architecture stays consistent, coupling controlled
-4. **🧠 Learning** - Human understanding keeps pace with agent execution
-5. **🎯 Scope** - Deadlines drive focus, priorities guide effort
+1. **Velocity** - Agents ship fast, complete tasks, maximize throughput
+2. **Quality** - Tests pass, coverage met, bugs minimized
+3. **Coherence** - Architecture stays consistent, coupling controlled
+4. **Learning** - Human understanding keeps pace with agent execution
+5. **Scope** - Deadlines drive focus, priorities guide effort
 
 **Your role:** Tune force intensity for your context (startup: max velocity, enterprise: max stability). The system maintains equilibrium automatically.
 
@@ -44,7 +68,7 @@ But faster execution creates new challenges:
 
 ![Functional Overview](docs/assets/images/functional-overview.svg)
 
-### 📊 Observe
+### Observe
 Real-time visibility into all five forces:
 - **Velocity**: tasks/day, cycle time, throughput trends
 - **Quality**: test coverage, bug escape rate, failure patterns
@@ -52,23 +76,23 @@ Real-time visibility into all five forces:
 - **Learning**: human understanding scores, knowledge gaps, prediction accuracy
 - **System health**: equilibrium state (stable, degrading, unstable)
 
-### ✓ Enforce
+### Enforce
 Automated governance gates that scale to agent velocity:
 - **Invariant checking**: test coverage ≥ threshold, API contracts stable, performance budgets met
 - **CI/CD integration**: static analysis, security scans, architecture validation
 - **Fast feedback**: agents get pass/fail with specific violations in seconds, not hours
 - **Context-aware**: startup profile (minimal gates) vs enterprise profile (comprehensive checks)
 
-### 🎓 Learn
+### Learn
 Active learning primitives that keep human understanding synchronized:
 - **Prediction challenges**: Before agent implements, human predicts impact. After deployment, system shows actual results.
 - **Comprehension sampling**: System quizzes human on agent-generated code. Tests actual retrieval from memory, not just recognition.
 - **Knowledge gap tracking**: Visualize which modules human deeply understands vs. black boxes.
 - **Experimental sandbox**: Safe environment to break things, test hypotheses, update mental model.
 
-**The insight from learning science:** You don't learn by having AI explain code. You learn by making predictions, testing them, and updating your model based on reality.
+**The insight from learning science:** You don't learn by having AI explain code. You learn by making predictions, testing them, and updating your model based on reality. This is deliberate practice for codebase understanding - grounded in decades of research on skill acquisition.
 
-### 🎚️ Steer
+### Steer
 Tune equilibrium without micromanaging:
 - **Adjust force intensity**: Turn velocity up for sprints, quality up for releases
 - **Configure invariants**: Set coverage thresholds, dependency limits, performance budgets
@@ -95,7 +119,7 @@ Tune equilibrium without micromanaging:
 4. Metrics update in real-time:
    • Velocity: 45 tasks/day ✓ (target: 50)
    • Quality: coverage 78% ✓ (threshold: 75%)
-   • Coherence: coupling score 6.2 ⚠️ (degrading from 5.8)
+   • Coherence: coupling score 6.2 ⚠ (degrading from 5.8)
    ↓
 5. Human sees alert: "Coupling increasing, consider adding dependency constraint"
    → Adjusts invariant: max dependency depth = 3
@@ -121,6 +145,8 @@ Feedback: "80% accurate. Missed: API contracts. Here's the test failure."
    ↓
 Human updates mental model, understanding score increases: 80/100
 ```
+
+**The result:** Human operates at strategic level (tuning coupling constraints, understanding core modules) while automated governance handles tactical level (coverage checks, test execution). This is Lincoln's sharpened axe and Whitehead's automated operations working together.
 
 ---
 
@@ -352,6 +378,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - **Tensegrity principle**: [Buckminster Fuller](https://en.wikipedia.org/wiki/Buckminster_Fuller), [Kenneth Snelson](https://en.wikipedia.org/wiki/Kenneth_Snelson)
 - **Learning science foundations**: [Justin Skycak](https://www.justinmath.com/) (Math Academy), [K. Anders Ericsson](https://en.wikipedia.org/wiki/K._Anders_Ericsson) (deliberate practice)
 - **Task storage**: [Beads](https://github.com/steveyegge/beads) by Steve Yegge
+- **Philosophical grounding**: Alfred North Whitehead (automation freeing cognition), Abraham Lincoln (preparation over action)
 - **Inspiration**: The emerging reality of agent-scale development and the practitioners pushing AI coding tools to their limits
 
 ---

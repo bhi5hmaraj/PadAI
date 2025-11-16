@@ -1,74 +1,50 @@
 graph TB
-    Human([👤 Human Developer<br/>Strategic Decisions])
+    Human[Human Developer<br/>Strategic Decisions]
 
-    subgraph System["Tensegrity: Governance for Agent-Scale Development"]
-        subgraph Agents["🤖 Agent Swarm - Execution at 10-100x Velocity"]
-            A1[Agent: Write Code]
-            A2[Agent: Run Tests]
-            A3[Agent: Fix Bugs]
-            A4[Agent: Refactor]
-            AN[Agent: Deploy]
-        end
+    subgraph Governance["Governance Layer - Balance Five Forces"]
+        direction LR
+        Observe[Observe<br/>━━━━━<br/>Real-time metrics<br/>Velocity, Quality<br/>Coherence, Learning<br/>Cycle time]
 
-        subgraph Governance["⚖️ Governance Layer - Keeping Forces in Balance"]
-            direction TB
+        Enforce[Enforce<br/>━━━━━<br/>Automated gates<br/>Test coverage<br/>Architecture rules<br/>Security scans]
 
-            Observe[📊 Observe<br/>Real-time Metrics<br/>━━━━━<br/>• Velocity: tasks/day<br/>• Quality: coverage, bugs<br/>• Coherence: coupling<br/>• Learning: understanding<br/>• Cycle time]
+        Learn[Learn<br/>━━━━━<br/>Active comprehension<br/>Prediction challenges<br/>Knowledge tracking<br/>Experimental sandbox]
 
-            Enforce[✓ Enforce<br/>Automated Gates<br/>━━━━━<br/>• Test coverage ≥ threshold<br/>• Architecture constraints<br/>• Performance budgets<br/>• Security scans]
-
-            Learn[🎓 Learn<br/>Active Comprehension<br/>━━━━━<br/>• Prediction challenges<br/>• Comprehension sampling<br/>• Knowledge gap tracking<br/>• Experimental sandbox]
-
-            Steer[🎚️ Steer<br/>Tune Equilibrium<br/>━━━━━<br/>• Adjust force intensity<br/>• Set invariant thresholds<br/>• Approve exceptions<br/>• Switch profiles]
-        end
-
-        subgraph Forces["Five Forces in Equilibrium"]
-            direction LR
-            F1[⚡ Velocity<br/>Ship Fast]
-            F2[🛡️ Quality<br/>Tests Pass]
-            F3[🏗️ Coherence<br/>Architecture Stable]
-            F4[🧠 Learning<br/>Human Understands]
-            F5[🎯 Scope<br/>Focus]
-        end
-
-        Codebase[(📦 Evolving Codebase<br/>Stable + Rapid Evolution)]
+        Steer[Steer<br/>━━━━━<br/>Tune equilibrium<br/>Adjust thresholds<br/>Switch profiles<br/>Override exceptions]
     end
 
-    Human -->|Observe status| Observe
-    Human -->|Tune forces| Steer
-    Human -->|Active learning| Learn
+    Agents[Multiple AI Agents<br/>━━━━━<br/>Execution at 10-100x velocity<br/>Write code, run tests, fix bugs, refactor, deploy]
+
+    Forces[Five Forces in Equilibrium<br/>━━━━━<br/>Velocity • Quality • Coherence • Learning • Scope]
+
+    Codebase[Evolving Codebase<br/>━━━━━<br/>Stable evolution at agent scale]
+
+    Human --> Observe
+    Human --> Steer
+    Human --> Learn
 
     Agents -->|Submit work| Enforce
     Enforce -->|Pass: merge| Codebase
     Enforce -->|Fail: feedback| Agents
 
-    Observe -->|Metrics feed| Steer
-    Observe -->|Track all forces| Forces
+    Observe --> Steer
+    Observe --> Forces
 
-    Learn -->|Update knowledge map| Human
-    Learn -->|Challenge on changes| Human
+    Steer --> Enforce
+    Steer --> Forces
 
-    Steer -->|Adjust thresholds| Enforce
-    Steer -->|Configure| Forces
+    Learn --> Human
 
-    Forces -.->|Balance creates| Codebase
+    Forces -.-> Codebase
 
     Agents -->|Read from| Codebase
-    Codebase -->|Grows 10-100x faster| Agents
 
     style Human fill:#e8f5e9,stroke:#2e7d32,stroke-width:3px
-    style Agents fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
     style Governance fill:#fff4e1,stroke:#ef6c00,stroke-width:3px
+    style Agents fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
     style Forces fill:#fff9c4,stroke:#f57f17,stroke-width:2px
-    style Codebase fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style Codebase fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
 
-    style Observe fill:#e1f5ff,stroke:#0288d1
-    style Enforce fill:#e8f5e9,stroke:#388e3c
-    style Learn fill:#fff3e0,stroke:#f57c00
-    style Steer fill:#fce4ec,stroke:#c2185b
-
-    style F1 fill:#e3f2fd
-    style F2 fill:#f3e5f5
-    style F3 fill:#e8f5e9
-    style F4 fill:#fff3e0
-    style F5 fill:#fce4ec
+    style Observe fill:#e1f5ff,stroke:#0288d1,stroke-width:2px
+    style Enforce fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style Learn fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style Steer fill:#fce4ec,stroke:#c2185b,stroke-width:2px
