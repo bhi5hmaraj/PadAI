@@ -11,10 +11,10 @@ set -euo pipefail
 #
 # Defaults (you can just run the script without args):
 #   PROJECT_ID          = personal-457416
-#   GITHUB_OWNER/REPO   = bhi5hmaraj/tensegrity
+#   GITHUB_OWNER/REPO   = bhi5hmaraj/tensergrity
 #   POOL_ID             = github-pool
 #   PROVIDER_ID         = github
-#   SA_NAME             = padai-deployer
+#   SA_NAME             = tensegrity-deployer
 #
 # After running, add these to GitHub Actions secrets:
 #   - GCP_PROJECT_ID            = <PROJECT_ID>
@@ -27,10 +27,10 @@ set -euo pipefail
 
 # Accept args but fall back to hardcoded defaults so you don't have to pass anything.
 PROJECT_ID="${1:-personal-457416}"
-REPO="${2:-bhi5hmaraj/tensegrity}"    # e.g., owner/name
+REPO="${2:-bhi5hmaraj/tensergrity}"    # e.g., owner/name
 POOL_ID="${3:-github-pool}"
 PROVIDER_ID="${4:-github}"
-SA_NAME="${5:-padai-deployer}"
+SA_NAME="${5:-tensegrity-deployer}"
 
 echo "→ Using configuration:"
 echo "   PROJECT_ID            = $PROJECT_ID"
@@ -63,7 +63,7 @@ fi
 # Service account (idempotent)
 if ! gcloud iam service-accounts describe "$SA_EMAIL" --project "$PROJECT_ID" >/dev/null 2>&1; then
   echo "→ Creating Service Account: $SA_EMAIL"
-  gcloud iam service-accounts create "$SA_NAME" --project "$PROJECT_ID" --display-name "PadAI Deployer (GitHub OIDC)"
+  gcloud iam service-accounts create "$SA_NAME" --project "$PROJECT_ID" --display-name "Tensegrity Deployer (GitHub OIDC)"
 else
   echo "✓ Service Account exists: $SA_EMAIL"
 fi
