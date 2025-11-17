@@ -6,11 +6,15 @@ set -euo pipefail
 # account with required roles, and binds WorkloadIdentityUser so Actions can
 # impersonate that service account without JSON keys.
 #
-# Usage:
-#   scripts/setup_wif.sh <PROJECT_ID> <GITHUB_OWNER/REPO> [POOL_ID=github-pool] [PROVIDER_ID=github] [SA_NAME=padai-deployer]
+# Usage (defaults hardcoded for convenience):
+#   scripts/setup_wif.sh [PROJECT_ID] [GITHUB_OWNER/REPO] [POOL_ID=github-pool] [PROVIDER_ID=github] [SA_NAME=padai-deployer]
 #
-# Example:
-#   scripts/setup_wif.sh my-project bhi5hmaraj/PadAI
+# Defaults (you can just run the script without args):
+#   PROJECT_ID          = personal-457416
+#   GITHUB_OWNER/REPO   = bhi5hmaraj/tensegrity
+#   POOL_ID             = github-pool
+#   PROVIDER_ID         = github
+#   SA_NAME             = padai-deployer
 #
 # After running, add these to GitHub Actions secrets:
 #   - GCP_PROJECT_ID            = <PROJECT_ID>
@@ -21,16 +25,19 @@ set -euo pipefail
 #   workload_identity_provider: projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$POOL_ID/providers/$PROVIDER_ID
 #   service_account: $SA_EMAIL
 
-if [[ $# -lt 2 ]]; then
-  echo "Usage: $0 <PROJECT_ID> <GITHUB_OWNER/REPO> [POOL_ID] [PROVIDER_ID] [SA_NAME]" >&2
-  exit 2
-fi
-
-PROJECT_ID="$1"
-REPO="$2"               # e.g., owner/name
+# Accept args but fall back to hardcoded defaults so you don't have to pass anything.
+PROJECT_ID="${1:-personal-457416}"
+REPO="${2:-bhi5hmaraj/tensegrity}"    # e.g., owner/name
 POOL_ID="${3:-github-pool}"
 PROVIDER_ID="${4:-github}"
 SA_NAME="${5:-padai-deployer}"
+
+echo "→ Using configuration:"
+echo "   PROJECT_ID            = $PROJECT_ID"
+echo "   GITHUB_OWNER/REPO     = $REPO"
+echo "   POOL_ID               = $POOL_ID"
+echo "   PROVIDER_ID           = $PROVIDER_ID"
+echo "   SA_NAME               = $SA_NAME"
 
 PROJECT_NUMBER=$(gcloud projects describe "$PROJECT_ID" --format='value(projectNumber)')
 WIP_PATH="projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$POOL_ID"
