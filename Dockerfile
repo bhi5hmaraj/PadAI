@@ -34,6 +34,13 @@ COPY server/ ./server/
 # Copy Beads workspace (if present) into an internal workspace path
 COPY .beads /workspace/.beads
 
+# Initialize Beads DB in /workspace and import JSONL if present
+RUN bash -lc 'set -eux; \
+  mkdir -p /workspace; cd /workspace; \
+  bd init; \
+  if [ -f .beads/issues.jsonl ]; then bd import .beads/issues.jsonl || true; fi; \
+  bd stats || true'
+
 # Copy built frontend
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
