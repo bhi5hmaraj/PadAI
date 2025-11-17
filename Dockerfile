@@ -12,13 +12,30 @@ RUN npm run build
 # Production stage
 FROM python:3.11-slim
 
-# Install bd CLI
-RUN apt-get update && \
-    apt-get install -y curl && \
-    curl -L https://github.com/steveyegge/beads/releases/latest/download/bd-linux -o /usr/local/bin/bd && \
-    chmod +x /usr/local/bin/bd && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Install bd CLI robustly (detect arch, verify ELF magic)
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends curl ca-certificates; \
+    rm -rf /var/lib/apt/lists/*; \
+    arch="$(dpkg --print-architecture || echo amd64)"; \
+    uname_m="$(uname -m || echo x86_64)"; \
+    base="https://github.com/steveyegge/beads/releases/latest/download"; \
+    for name in "bd-linux-$arch" "bd-linux-$uname_m" "bd-linux-amd64" "bd-linux-x86_64" "bd-linux-arm64" "bd-linux-aarch64" "bd-linux" "bd"; do \
+      url="$base/$name"; echo "Attempting to download $url"; \
+      if curl -fsSL "$url" -o /usr/local/bin/bd; then \
+        chmod +x /usr/local/bin/bd || true; \
+        if head -c 4 /usr/local/bin/bd | od -An -t x1 | tr -d ' \n' | grep -qi '^7f454c46$'; then \
+          echo "bd installed from $url"; \
+          /usr/local/bin/bd --help >/dev/null 2>&1 || true; \
+          break; \
+        else \
+          echo "Downloaded file is not an ELF executable; trying next candidate"; \
+        fi; \
+      fi; \
+    done; \
+    if ! [ -x /usr/local/bin/bd ] || ! head -c 4 /usr/local/bin/bd | od -An -t x1 | tr -d ' \n' | grep -qi '^7f454c46$'; then \
+      echo "ERROR: Failed to install bd CLI"; exit 1; \
+    fi
 
 WORKDIR /app
 
