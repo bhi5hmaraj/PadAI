@@ -39,6 +39,7 @@ COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
 # Set workspace path
 ENV WORKSPACE_PATH=/workspace
+ENV BEADS_DIR=/workspace/.beads
 ENV PORT=8080
 
 # Expose default Cloud Run port (honors PORT env variable at runtime)
