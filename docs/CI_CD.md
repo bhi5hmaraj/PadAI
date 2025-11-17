@@ -64,6 +64,9 @@ To change env vars in deploy step, update:
 - For persistent Beads data, mount a GCS volume (Cloud Run volumes with GCS FUSE) and set `WORKSPACE_PATH` to that mount path. This workflow doesn’t provision volumes.
 - If you want a PR comment with the service URL, add a step after deploy to call the GitHub API and post the URL.
 
+API enablement:
+- The workflow attempts to enable `run.googleapis.com`, `artifactregistry.googleapis.com`, and `cloudbuild.googleapis.com` as a best‑effort. If the deployer SA lacks permission to enable services, the step will continue with a warning. Ensure these APIs are enabled once by a project Owner.
+
 ## Local checks before pushing
 
 Install hooks once with `scripts/install_hooks.sh`.

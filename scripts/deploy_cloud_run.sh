@@ -30,12 +30,13 @@ ENV_VARS="${ENV_VARS:-WORKSPACE_PATH=/workspace,LOG_LEVEL=INFO}"
 
 echo "→ Project: $PROJECT  Region: $REGION  Service: $SERVICE"
 
-echo "→ Enabling required APIs (idempotent)"
-gcloud services enable \
-  run.googleapis.com \
-  artifactregistry.googleapis.com \
-  cloudbuild.googleapis.com \
-  --project "$PROJECT" >/dev/null
+echo "→ Ensuring required APIs (best-effort)"
+set +e
+for SVC in run.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com; do
+  gcloud services enable "$SVC" --project "$PROJECT" >/dev/null \
+    || echo "WARN: could not enable $SVC (missing permission or already enabled)"
+done
+set -e
 
 REPO="padai"
 IMAGE_PATH="$REGION-docker.pkg.dev/$PROJECT/$REPO/$SERVICE"
@@ -57,4 +58,3 @@ gcloud run deploy "$SERVICE" \
 
 URL=$(gcloud run services describe "$SERVICE" --project "$PROJECT" --region "$REGION" --format='value(status.url)')
 echo "✓ Deployed: $URL"
-

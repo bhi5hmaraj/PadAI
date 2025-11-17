@@ -31,12 +31,13 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           install_components: 'beta'
 
-      - name: Enable required APIs (idempotent)
+      - name: Ensure required APIs (best-effort)
         run: |
-          gcloud services enable \
-            run.googleapis.com \
-            artifactregistry.googleapis.com \
-            cloudbuild.googleapis.com
+          set +e
+          for SVC in run.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com; do
+            gcloud services enable "$SVC" || echo "WARN: could not enable $SVC (likely missing permission or already enabled)"
+          done
+          set -e
 
       - name: Configure Docker auth for Artifact Registry
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet

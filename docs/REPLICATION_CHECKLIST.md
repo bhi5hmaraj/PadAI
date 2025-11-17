@@ -28,6 +28,13 @@ We use Service Account JSON auth for GitHub Actions (simpler than OIDC/WIF).
 
 Security note: SA keys are less secure than OIDC. Rotate the key periodically and restrict repo access. You can switch back to OIDC later (see Appendix A).
 
+API enablement permission:
+- Enabling services requires elevated permissions (Owner/Editor or `roles/serviceusage.serviceUsageAdmin`).
+- Our CI tries to enable services as best‑effort but ignores permission errors. Make sure these APIs are enabled once by a project Owner:
+  - `run.googleapis.com`
+  - `artifactregistry.googleapis.com`
+  - `cloudbuild.googleapis.com`
+
 ## 2) GitHub Actions Secrets
 Add the following repository secrets (Actions):
 - `GCP_PROJECT_ID` = `<PROJECT_ID>`
@@ -114,4 +121,3 @@ Hook behavior in OIDC mode:
 - Ensures `workload_identity_provider` exists in workflows.
 - Reads provider attribute condition and verifies it matches your repo.
 - Verifies `roles/iam.workloadIdentityUser` binding for your repo on the SA.
-
