@@ -96,4 +96,27 @@ else
   echo "[prepush] ✅ Dockerfile installs from server/requirements.txt"
 fi
 
+# 4) Optional: Docker build smoke test (skip with PREPUSH_SKIP_DOCKER_BUILD=1)
+if [[ "${PREPUSH_SKIP_DOCKER_BUILD:-0}" == "1" ]]; then
+  echo "[prepush] (skip) Docker build test disabled via PREPUSH_SKIP_DOCKER_BUILD=1"
+else
+  if command -v docker >/dev/null 2>&1; then
+    echo "[prepush] 🐳 Building Docker image to verify Dockerfile (can take a while)"
+    IMG_TAG="tensegrity-prepush:check-$(date +%s)"
+    set +e
+    docker build -t "$IMG_TAG" . >/dev/null 2>&1
+    RC=$?
+    set -e
+    if [[ $RC -ne 0 ]]; then
+      echo "[prepush][ERROR] Docker build failed. Fix Dockerfile/build before pushing (set PREPUSH_SKIP_DOCKER_BUILD=1 to bypass)." >&2
+      exit 1
+    else
+      echo "[prepush] ✅ Docker build succeeded"
+      docker image rm -f "$IMG_TAG" >/dev/null 2>&1 || true
+    fi
+  else
+    echo "[prepush] (docker not found) Skipping Docker build test."
+  fi
+fi
+
 echo "[prepush] All checks passed."
