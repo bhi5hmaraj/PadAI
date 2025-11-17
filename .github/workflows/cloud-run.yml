@@ -57,7 +57,7 @@ jobs:
       - name: Debug enabled services and AR repos
         run: |
           set -x
-          gcloud services list --enabled
+          gcloud services list --enabled || echo "WARN: cannot list enabled services (insufficient permissions)"
           gcloud artifacts repositories list --location=${{ env.REGION }} || true
           gcloud run services list --region=${{ env.REGION }} || true
 
