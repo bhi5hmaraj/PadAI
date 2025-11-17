@@ -46,6 +46,10 @@ This uses the Dockerfile to:
 
 Note: Cloud Run instances are ephemeral. Any changes to the database at runtime will not persist across restarts. For durable state, back `/workspace/.beads` with GCS FUSE or move to a managed DB (future work).
 
+## CI/CD path
+
+This repo includes GitHub Actions workflows that build, push, and deploy on push. Current default auth is Service Account JSON. Required secrets and steps are documented in `docs/CI_CD.md` and the end‑to‑end replication steps in `docs/REPLICATION_CHECKLIST.md`.
+
 ## Deploy to Cloud Run (via gcloud)
 ```bash
 SERVICE=padai

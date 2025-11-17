@@ -26,10 +26,14 @@ Add these repo secrets under: Settings → Secrets and variables → Actions
 - `GCP_REGION` (string, e.g., `us-central1`)
 - `GCP_SA_KEY` (JSON service account key)
 
-Service account needs roles:
+Service account (deployer) needs roles:
 - `roles/run.admin`
 - `roles/artifactregistry.writer`
 - `roles/iam.serviceAccountUser`
+
+Auth modes supported:
+- Service Account JSON (default): workflows use `credentials_json: ${{ secrets.GCP_SA_KEY }}`.
+- OIDC / Workload Identity Federation (optional): see `docs/REPLICATION_CHECKLIST.md` Appendix A to set up the provider and switch the workflows.
 
 ## How to use
 
@@ -59,6 +63,17 @@ To change env vars in deploy step, update:
 - Cloud Run defaults to port `$PORT` (8080). The server binds to `$PORT` automatically.
 - For persistent Beads data, mount a GCS volume (Cloud Run volumes with GCS FUSE) and set `WORKSPACE_PATH` to that mount path. This workflow doesn’t provision volumes.
 - If you want a PR comment with the service URL, add a step after deploy to call the GitHub API and post the URL.
+
+## Local checks before pushing
+
+Install hooks once with `scripts/install_hooks.sh`.
+
+The pre‑push hook (`scripts/prepush_checks.sh`) verifies:
+- Auth mode: SA or WIF, with appropriate validations.
+- Dockerfile contains `python -m server.main` and installs from `server/requirements.txt`.
+- Optional GCP specifics via `gcloud`.
+
+Bypass with `git push --no-verify` only in emergencies.
 
 ## Troubleshooting
 
