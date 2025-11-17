@@ -153,11 +153,299 @@ Steps:
 
 **Cost:** $0 (free tier)
 
+## Real-Time Update Strategies (Post-MVP)
+
+**Current Status (MVP):** Polling removed, manual refresh button added. This eliminates the 67s timeout and excessive load issues caused by 5-second polling.
+
+For future real-time updates without polling, here's a comparison of options:
+
+### Comparison Table
+
+| Feature | WebSocket (Native) | Server-Sent Events (SSE) | Redis Pub/Sub | Pusher (Managed) | Soketi (Self-hosted) |
+|---------|-------------------|-------------------------|---------------|------------------|---------------------|
+| **Complexity** | Medium | Low | High | Very Low | Low-Medium |
+| **Bidirectional** | ✅ Yes | ❌ No (server→client only) | ✅ Yes (via separate channels) | ✅ Yes | ✅ Yes |
+| **Browser Support** | Excellent (all modern) | Excellent (all modern) | N/A (backend only) | Excellent | Excellent |
+| **Auto-reconnect** | Manual implementation | Built-in | Manual | Built-in | Built-in |
+| **Setup Time** | ~2 hours | ~30 min | ~3 hours | ~15 min | ~1 hour |
+| **Dependencies** | None (native) | None (native) | Redis server | None (cloud) | Node.js server |
+| **Cost (Monthly)** | $0 (included) | $0 (included) | $5-10 (DO/Vultr) | $0-49+ (usage-based) | $5-10 (DO/Vultr) |
+| **Scalability** | Manual (sticky sessions) | Manual | Excellent (Redis cluster) | Automatic | Good (clustering support) |
+| **Python Support** | ✅ FastAPI WebSocket | ✅ sse-starlette | ✅ redis-py | ✅ pusher SDK | ✅ pusher-compatible |
+| **Client Code** | ~20 lines | ~10 lines | N/A | ~5 lines | ~5 lines |
+| **Ideal For** | Chat, gaming | Status updates, logs | Multi-server setups | Quick prototypes | Production without vendor lock |
+
+### Detailed Analysis
+
+#### 1. WebSocket (Native)
+
+**Pros:**
+- No external dependencies
+- Full bidirectional communication
+- Low latency
+- Built into FastAPI
+
+**Cons:**
+- Requires reconnection logic
+- Doesn't scale horizontally without sticky sessions or Redis
+- More complex than SSE for one-way updates
+
+**Best for:** Interactive features where clients need to send data back (task creation, live collaboration)
+
+**Implementation estimate:** 2-3 hours
+
+```python
+# Server (FastAPI)
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        # Send updates when tasks change
+        await websocket.send_json({"type": "task_update", "data": tasks})
+```
+
+#### 2. Server-Sent Events (SSE)
+
+**Pros:**
+- Simple HTTP-based protocol
+- Built-in reconnection
+- Efficient for server→client updates
+- Works through proxies/firewalls
+
+**Cons:**
+- One-way only (server→client)
+- Connection limit per domain (6 in most browsers)
+- Not suitable for bidirectional needs
+
+**Best for:** Dashboard status updates, real-time logs, progress tracking
+
+**Implementation estimate:** 30 minutes
+
+```python
+# Server (FastAPI + sse-starlette)
+from sse_starlette.sse import EventSourceResponse
+
+@app.get("/api/stream")
+async def stream_updates():
+    async def event_generator():
+        while True:
+            if tasks_changed:
+                yield {"data": json.dumps(tasks)}
+            await asyncio.sleep(1)
+    return EventSourceResponse(event_generator())
+```
+
+```javascript
+// Client
+const eventSource = new EventSource('/api/stream');
+eventSource.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  updateUI(data);
+};
+```
+
+#### 3. Redis Pub/Sub
+
+**Pros:**
+- Excellent for multi-server setups
+- Battle-tested at scale
+- Can fan-out to WebSocket/SSE clients
+- Decouples workers from dashboard
+
+**Cons:**
+- Requires Redis server ($5-10/mo)
+- Adds architectural complexity
+- Overkill for single-server MVP
+
+**Best for:** Multi-region deployments, microservices, high-traffic scenarios
+
+**Implementation estimate:** 3-4 hours
+
+```python
+# Worker publishes
+redis_client.publish('task_updates', json.dumps(task))
+
+# Server subscribes and broadcasts to WebSocket clients
+pubsub = redis_client.pubsub()
+pubsub.subscribe('task_updates')
+for message in pubsub.listen():
+    broadcast_to_websocket_clients(message['data'])
+```
+
+#### 4. Pusher (Managed Service)
+
+**Pros:**
+- Zero infrastructure setup
+- Automatic scaling
+- Built-in presence channels
+- Generous free tier (100 concurrent connections, 200k messages/day)
+
+**Cons:**
+- Vendor lock-in
+- Pricing scales with usage ($49/mo for 500 connections)
+- Not self-hostable
+- Adds external dependency
+
+**Best for:** Rapid prototyping, startups, teams that don't want to manage infrastructure
+
+**Pricing:**
+- Free: 100 concurrent, 200k messages/day
+- $49/mo: 500 concurrent, unlimited messages
+- $299/mo: 2000 concurrent
+
+**Implementation estimate:** 15 minutes
+
+```python
+# Server
+import pusher
+pusher_client = pusher.Pusher(app_id, key, secret, cluster)
+pusher_client.trigger('tasks', 'update', {'data': tasks})
+```
+
+```javascript
+// Client (3 lines!)
+const pusher = new Pusher('key', {cluster: 'us2'});
+const channel = pusher.subscribe('tasks');
+channel.bind('update', (data) => updateUI(data));
+```
+
+#### 5. Soketi (Self-Hosted Pusher Alternative)
+
+**Pros:**
+- Pusher-compatible protocol (drop-in replacement)
+- Self-hosted (full control, no vendor lock-in)
+- High performance (uWebSockets.js - 10x faster than Socket.IO)
+- Low resource usage (thousands of connections on 1GB/1CPU)
+- Open source and free
+
+**Cons:**
+- Requires server infrastructure ($5-10/mo)
+- Some setup complexity
+- Maintenance concerns (less frequent updates recently)
+- Need to manage updates and security
+
+**Best for:** Production deployments, cost-conscious projects, avoiding vendor lock-in
+
+**Pricing:**
+- $0 software cost
+- $5-10/mo VPS (DigitalOcean/Vultr)
+- Unlimited connections/messages
+
+**Implementation estimate:** 1-2 hours (setup + integration)
+
+```bash
+# Deploy on DigitalOcean/Vultr
+docker run -p 6001:6001 quay.io/soketi/soketi:latest
+```
+
+```javascript
+// Client (same as Pusher!)
+const pusher = new Pusher('app-key', {
+  wsHost: 'your-soketi-server.com',
+  wsPort: 6001,
+  forceTLS: false
+});
+```
+
+### MVP Recommendation: **Server-Sent Events (SSE)**
+
+**Why SSE for MVP:**
+
+1. **Simplest implementation** - 30 minutes to add, no new dependencies
+2. **Perfect fit for use case** - Dashboard only needs server→client updates
+3. **Built-in reconnection** - Browser handles it automatically
+4. **Zero cost** - No additional infrastructure
+5. **Easy to replace** - Can switch to WebSocket/Soketi later without frontend changes
+
+**Migration path:**
+```
+MVP: Manual refresh → SSE (Phase 2) → WebSocket/Soketi (if needed)
+```
+
+**When to upgrade from SSE:**
+
+- **→ WebSocket:** When you need bidirectional (task creation from dashboard)
+- **→ Soketi:** When you want Pusher-like features without vendor lock-in
+- **→ Redis Pub/Sub:** When you have multiple server instances
+
+**Implementation priority:**
+
+1. **Now (MVP):** Manual refresh button ✅ **DONE**
+2. **Next (Phase 2):** Add SSE for real-time updates (~30 min)
+3. **Future (Phase 3+):** Consider WebSocket/Soketi if SSE limitations hit
+
+### Code Example: SSE Implementation
+
+**Server (add to server/main.py):**
+
+```python
+from sse_starlette.sse import EventSourceResponse
+import asyncio
+import json
+
+# Track last known state
+_last_task_hash = None
+
+@app.get("/api/stream")
+async def stream_updates(request: Request):
+    """Stream task updates via Server-Sent Events"""
+    async def event_generator():
+        global _last_task_hash
+        while True:
+            # Check if client disconnected
+            if await request.is_disconnected():
+                break
+
+            # Get current tasks
+            try:
+                tasks = get_all_tasks_fast(WORKSPACE)
+                task_hash = hash(json.dumps(tasks))
+
+                # Only send if changed
+                if task_hash != _last_task_hash:
+                    _last_task_hash = task_hash
+                    yield {
+                        "event": "update",
+                        "data": json.dumps({"tasks": tasks})
+                    }
+            except Exception as e:
+                logger.error(f"SSE error: {e}")
+
+            await asyncio.sleep(2)  # Check every 2 seconds
+
+    return EventSourceResponse(event_generator())
+```
+
+**Client (update frontend/src/App.tsx):**
+
+```typescript
+useEffect(() => {
+  fetchData(); // Initial load
+
+  // Connect to SSE stream
+  const eventSource = new EventSource(`${API_URL}/api/stream`);
+
+  eventSource.addEventListener('update', (event) => {
+    const data = JSON.parse(event.data);
+    setTasks(data.tasks || []);
+    if (debug) console.log('[SSE] Task update:', data);
+  });
+
+  eventSource.onerror = (err) => {
+    console.error('[SSE] Connection error:', err);
+    eventSource.close();
+    // Fallback to manual refresh if SSE fails
+  };
+
+  return () => eventSource.close();
+}, []);
+```
+
 ## What We're NOT Building (Yet)
 
 These are intentionally deferred until we've validated the core concept:
 
-- **WebSocket real-time updates** - Polling works fine for MVP. Add later if it's actually painful.
+- **Advanced real-time (WebSocket/Pusher/Soketi)** - SSE is sufficient for dashboard updates. Add if we need bidirectional or multi-server.
 - **MCP server for workers** - Bash + curl works. Build MCP if workflow feels clunky after using it.
 - **Telegram notifications** - Can add in 20 lines once we know what events matter.
 - **Agent registry / heartbeats** - Not needed until agents start disappearing and we need monitoring.
