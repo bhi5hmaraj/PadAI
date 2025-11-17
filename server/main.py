@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 import os
+import subprocess
 import shutil
 import time
 import logging
@@ -89,6 +90,15 @@ async def on_startup():
     logger.info(f"  WORKSPACE_PATH={WORKSPACE}")
     logger.info(f"  LOG_LEVEL={LOG_LEVEL}")
     logger.info(f"  BD_PATH={bd_path or 'NOT FOUND'}")
+    try:
+        ver = subprocess.run(["bd", "--version"], capture_output=True, text=True)
+        ver_txt = (ver.stdout or ver.stderr or "").strip()
+        if ver.returncode == 0 and ver_txt:
+            logger.info(f"  BD_VERSION={ver_txt}")
+        else:
+            logger.warning(f"  BD_VERSION=unknown (rc={ver.returncode})")
+    except Exception as e:
+        logger.warning(f"  BD_VERSION unavailable: {e}")
     logger.info(f"  BEADS_JSONL={'present' if os.path.exists(beads_path) else 'missing'} @ {beads_path}")
     logger.info("Routes: /, /api/status, /api/ready, /api/tasks, /api/claim, /api/complete, /api/create, /api/update")
 
