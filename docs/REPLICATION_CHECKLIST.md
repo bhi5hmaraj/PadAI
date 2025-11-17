@@ -59,6 +59,11 @@ Defaults/behavior:
   - `tensegrity-pr-<PR>` on pull requests
 - Env vars at deploy: `WORKSPACE_PATH=/workspace, LOG_LEVEL=INFO`
 
+Important: bd is the single source of truth
+- The server requires the `bd` CLI at runtime; there is no JSONL fallback.
+- The container installs `bd` during build and verifies it’s a valid ELF.
+- If `bd` is unavailable or fails to run, read endpoints will error to avoid drift.
+
 Optional rename: If you prefer `tensegrity` naming everywhere, update service names and `env.REPO` in the workflows accordingly.
 
 ## 4) Dockerfile constraints (what our checks enforce)
