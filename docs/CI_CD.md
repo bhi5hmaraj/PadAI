@@ -72,6 +72,10 @@ Example (your project):
 gcloud services enable run.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com --project personal-457416
 ```
 
+## Postmortem
+
+See `docs/POSTMORTEM_GITHUB_ACTIONS.md` for a detailed write-up of the initial CI failures (auth, permissions, AR repo, Dockerfile) and how we fixed them, plus action items to avoid regressions.
+
 ## Local checks before pushing
 
 Install hooks once with `scripts/install_hooks.sh`.
