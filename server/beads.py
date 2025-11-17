@@ -5,6 +5,7 @@ import subprocess
 import logging
 import json
 import os
+import time
 from typing import Dict, List, Optional, Any
 
 
@@ -27,6 +28,8 @@ def execute_bd(args: List[str], cwd: str = "/workspace") -> str:
     Raises:
         BeadsError: If command fails or times out
     """
+    logger = logging.getLogger("padai.beads")
+
     # Use bd defaults (auto-discover DB). Some versions don't support --no-db.
     # Build command ensuring global flags precede subcommand
     db_path = os.getenv("BEADS_DB_PATH")
@@ -44,14 +47,18 @@ def execute_bd(args: List[str], cwd: str = "/workspace") -> str:
     if db_path:
         preflags += ["--db", db_path]
     # Speed/stability flags; can be disabled via env if needed
-    if os.getenv("BD_NO_DAEMON", "1") != "0":
+    no_daemon = os.getenv("BD_NO_DAEMON", "1") != "0"
+    no_auto_import = os.getenv("BD_NO_AUTO_IMPORT", "1") != "0"
+    if no_daemon:
         preflags.append("--no-daemon")
-    if os.getenv("BD_NO_AUTO_IMPORT", "1") != "0":
+    if no_auto_import:
         preflags.append("--no-auto-import")
 
     cmd = ["bd", *preflags, *args_no_json]
-    logger = logging.getLogger("padai.beads")
-    logger.debug(f"exec cwd={cwd} cmd={' '.join(cmd)}")
+    timeout_secs = int(os.getenv("BD_TIMEOUT_SECS", "30"))
+
+    logger.info(f"⏱️  BD EXEC START: {' '.join(args_no_json)} | daemon={not no_daemon} auto_import={not no_auto_import} timeout={timeout_secs}s")
+    start_time = time.time()
 
     try:
         result = subprocess.run(
@@ -59,22 +66,32 @@ def execute_bd(args: List[str], cwd: str = "/workspace") -> str:
             cwd=cwd,
             capture_output=True,
             text=True,
-            timeout=int(os.getenv("BD_TIMEOUT_SECS", "30"))
+            timeout=timeout_secs
         )
 
+        elapsed = time.time() - start_time
+
         if result.returncode != 0:
-            logger.error(f"bd failed ({result.returncode}): {result.stderr.strip()}")
+            logger.error(f"❌ BD FAILED in {elapsed:.2f}s ({result.returncode}): {result.stderr.strip()}")
             raise BeadsError(f"bd command failed: {result.stderr}")
 
         out = result.stdout.strip()
-        logger.debug(f"bd ok: {out[:200]}{'...' if len(out) > 200 else ''}")
+        out_preview = out[:200] + ('...' if len(out) > 200 else '')
+        logger.info(f"✅ BD SUCCESS in {elapsed:.2f}s: {' '.join(args_no_json)} | output_size={len(out)} bytes")
+        logger.debug(f"BD OUTPUT: {out_preview}")
         return out
 
     except subprocess.TimeoutExpired:
-        raise BeadsError(f"bd command timed out after {os.getenv('BD_TIMEOUT_SECS','30')}s")
+        elapsed = time.time() - start_time
+        logger.error(f"⏱️  BD TIMEOUT after {elapsed:.2f}s: {' '.join(args_no_json)}")
+        raise BeadsError(f"bd command timed out after {timeout_secs}s")
     except FileNotFoundError:
+        elapsed = time.time() - start_time
+        logger.error(f"❌ BD NOT FOUND after {elapsed:.2f}s")
         raise BeadsError("bd CLI not found. Install from https://github.com/steveyegge/beads")
     except OSError as e:
+        elapsed = time.time() - start_time
+        logger.error(f"❌ BD OS ERROR after {elapsed:.2f}s: {e}")
         # Common when the downloaded binary is an HTML error page or wrong arch
         raise BeadsError(f"bd execution failed: {e}")
 
@@ -164,6 +181,10 @@ def get_status(cwd: str = "/workspace") -> Dict[str, Any]:
     - in_progress: currently in progress
     - completed: done
     """
+    logger = logging.getLogger("padai.beads")
+    start_time = time.time()
+    logger.info("📊 get_status() called")
+
     # Prefer bd stats; fall back to computing from bd export (DB-only)
     try:
         output = execute_bd(["stats"], cwd)
@@ -186,9 +207,11 @@ def get_status(cwd: str = "/workspace") -> Dict[str, Any]:
             elif 'Closed:' in line or 'Completed:' in line:
                 status['completed'] = int(line.split(':')[1].strip())
 
+        elapsed = time.time() - start_time
+        logger.info(f"✅ get_status() completed in {elapsed:.2f}s: {status}")
         return status
     except BeadsError as e:
-        logging.getLogger("padai.beads").error(str(e))
+        logger.error(f"⚠️  get_status() bd stats failed, falling back to bd export")
         # Fallback: compute counts via bd export
         tasks = get_all_tasks(cwd)
         total = len(tasks)
@@ -214,12 +237,15 @@ def get_status(cwd: str = "/workspace") -> Dict[str, Any]:
             if status_t in (None, 'open', 'ready') and not is_blocked(t):
                 ready += 1
 
-        return {
+        result = {
             "total": total,
             "ready": ready,
             "in_progress": in_prog,
             "completed": completed,
         }
+        elapsed = time.time() - start_time
+        logger.info(f"✅ get_status() completed via fallback in {elapsed:.2f}s: {result}")
+        return result
 
 
 def get_ready_tasks(cwd: str = "/workspace") -> List[Dict[str, Any]]:
@@ -228,6 +254,10 @@ def get_ready_tasks(cwd: str = "/workspace") -> List[Dict[str, Any]]:
 
     Returns list of task dicts with id, title, status, etc.
     """
+    logger = logging.getLogger("padai.beads")
+    start_time = time.time()
+    logger.info("🎯 get_ready_tasks() called")
+
     output = execute_bd(["ready"], cwd)
 
     tasks: List[Dict[str, Any]] = []
@@ -253,6 +283,8 @@ def get_ready_tasks(cwd: str = "/workspace") -> List[Dict[str, Any]]:
             except Exception:
                 continue
 
+    elapsed = time.time() - start_time
+    logger.info(f"✅ get_ready_tasks() completed in {elapsed:.2f}s | {len(tasks)} ready tasks")
     return tasks
 
 
@@ -262,8 +294,14 @@ def get_all_tasks(cwd: str = "/workspace") -> List[Dict[str, Any]]:
 
     Returns list of task dicts parsed from JSONL.
     """
+    logger = logging.getLogger("padai.beads")
+    start_time = time.time()
+    logger.info("📋 get_all_tasks() called")
+
     # Export from DB as JSONL via bd export
     output = execute_bd(["export"], cwd)
+
+    parse_start = time.time()
     tasks: List[Dict[str, Any]] = []
     for line in output.splitlines():
         line = line.strip()
@@ -274,6 +312,10 @@ def get_all_tasks(cwd: str = "/workspace") -> List[Dict[str, Any]]:
             tasks.append(obj)
         except json.JSONDecodeError:
             continue
+
+    parse_elapsed = time.time() - parse_start
+    total_elapsed = time.time() - start_time
+    logger.info(f"✅ get_all_tasks() completed in {total_elapsed:.2f}s (parse: {parse_elapsed:.2f}s) | {len(tasks)} tasks")
     return tasks
 
 
