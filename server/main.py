@@ -25,6 +25,11 @@ from .beads import (
     add_dependency,
     BeadsError
 )
+from .beads_db import (
+    get_status_fast,
+    get_ready_tasks_fast,
+    get_all_tasks_fast,
+)
 
 app = FastAPI(title="PadAI Master Server", version="0.1.0")
 
@@ -145,12 +150,20 @@ async def api_status():
     }
     """
     try:
-        status = get_status(WORKSPACE)
-        logger.info(f"/api/status -> {status}")
+        # Try fast SQLite access first
+        status = get_status_fast(WORKSPACE)
+        logger.info(f"/api/status -> {status} (via SQLite)")
         return StatusResponse(**status)
-    except BeadsError as e:
-        logger.exception("/api/status failed")
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        # Fallback to bd CLI if database access fails
+        logger.warning(f"/api/status SQLite failed: {e}, falling back to bd CLI")
+        try:
+            status = get_status(WORKSPACE)
+            logger.info(f"/api/status -> {status} (via bd CLI)")
+            return StatusResponse(**status)
+        except BeadsError as e:
+            logger.exception("/api/status failed")
+            raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/api/ready")
@@ -192,15 +205,26 @@ async def api_tasks():
     }
     """
     try:
-        tasks = get_all_tasks(WORKSPACE)
-        logger.info(f"/api/tasks -> count={len(tasks)}")
+        # Try fast SQLite access first
+        tasks = get_all_tasks_fast(WORKSPACE)
+        logger.info(f"/api/tasks -> count={len(tasks)} (via SQLite)")
         if tasks:
             t = tasks[0]
             logger.debug(f"first: id={t.get('id')} title={t.get('title')} status={t.get('status')}")
         return {"tasks": tasks}
-    except BeadsError as e:
-        logger.exception("/api/tasks failed")
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        # Fallback to bd CLI if database access fails
+        logger.warning(f"/api/tasks SQLite failed: {e}, falling back to bd CLI")
+        try:
+            tasks = get_all_tasks(WORKSPACE)
+            logger.info(f"/api/tasks -> count={len(tasks)} (via bd CLI)")
+            if tasks:
+                t = tasks[0]
+                logger.debug(f"first: id={t.get('id')} title={t.get('title')} status={t.get('status')}")
+            return {"tasks": tasks}
+        except BeadsError as e:
+            logger.exception("/api/tasks failed")
+            raise HTTPException(status_code=500, detail=str(e))
 
 
 
