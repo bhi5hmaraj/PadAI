@@ -6,6 +6,10 @@ echo "[prepush] Running PadAI/Tensegrity pre-push checks..."
 ROOT_DIR=$(git rev-parse --show-toplevel)
 cd "$ROOT_DIR"
 
+# One-shot flags via files under .git/
+FLAG_DIR="$ROOT_DIR/.git"
+SKIP_DOCKER_FLAG="$FLAG_DIR/prepush.skip_docker"
+
 # 1) Detect auth mode used by workflows
 if rg -n "credentials_json\s*:" .github/workflows >/dev/null 2>&1; then
   AUTH_MODE="SA"
@@ -96,9 +100,10 @@ else
   echo "[prepush] ✅ Dockerfile installs from server/requirements.txt"
 fi
 
-# 4) Optional: Docker build smoke test (skip with PREPUSH_SKIP_DOCKER_BUILD=1)
-if [[ "${PREPUSH_SKIP_DOCKER_BUILD:-0}" == "1" ]]; then
-  echo "[prepush] (skip) Docker build test disabled via PREPUSH_SKIP_DOCKER_BUILD=1"
+# 4) Optional: Docker build smoke test (skippable via --skip-docker flag file)
+if [[ -f "$SKIP_DOCKER_FLAG" ]]; then
+  echo "[prepush] (skip) Docker build test disabled via --skip-docker flag"
+  rm -f "$SKIP_DOCKER_FLAG" || true
 else
   if command -v docker >/dev/null 2>&1; then
     echo "[prepush] 🐳 Building Docker image to verify Dockerfile (can take a while)"
