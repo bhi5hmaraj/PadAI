@@ -60,6 +60,10 @@ def execute_bd(args: List[str], cwd: str = "/workspace") -> str:
     start_time = time.time()
 
     try:
+        # Log right before subprocess call
+        pre_subprocess = time.time()
+        logger.debug(f"⏱️  About to spawn subprocess at {pre_subprocess - start_time:.3f}s")
+
         result = subprocess.run(
             cmd,
             cwd=cwd,
@@ -68,7 +72,11 @@ def execute_bd(args: List[str], cwd: str = "/workspace") -> str:
             timeout=timeout_secs
         )
 
+        post_subprocess = time.time()
+        subprocess_time = post_subprocess - pre_subprocess
         elapsed = time.time() - start_time
+
+        logger.info(f"⏱️  BD subprocess.run took {subprocess_time:.3f}s of total {elapsed:.3f}s")
 
         if result.returncode != 0:
             logger.error(f"❌ BD FAILED in {elapsed:.2f}s ({result.returncode}): {result.stderr.strip()}")
