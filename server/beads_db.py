@@ -103,13 +103,9 @@ def get_all_tasks_fast(workspace: str = "/workspace") -> List[Dict[str, Any]]:
     with get_db_connection(workspace) as conn:
         cursor = conn.cursor()
 
-        # Get all issues with their fields
+        # Get all issues with their fields - use SELECT * to get all columns
         cursor.execute("""
-            SELECT
-                id, title, description, status, priority, assignee,
-                issue_type, created_at, updated_at, closed_at,
-                notes, design, external_ref, acceptance_criteria,
-                approval, epic_id
+            SELECT *
             FROM issues
             ORDER BY priority ASC, created_at DESC
         """)
@@ -121,14 +117,18 @@ def get_all_tasks_fast(workspace: str = "/workspace") -> List[Dict[str, Any]]:
             task = dict(row)
 
             # Get dependencies for this issue
-            cursor.execute("""
-                SELECT depends_on_id, type
-                FROM dependencies
-                WHERE issue_id = ?
-            """, (task["id"],))
+            try:
+                cursor.execute("""
+                    SELECT depends_on_id, type
+                    FROM dependencies
+                    WHERE issue_id = ?
+                """, (task.get("id"),))
 
-            deps = cursor.fetchall()
-            task["dependencies"] = [dict(d) for d in deps]
+                deps = cursor.fetchall()
+                task["dependencies"] = [dict(d) for d in deps]
+            except Exception as e:
+                logger.warning(f"Failed to get dependencies for {task.get('id')}: {e}")
+                task["dependencies"] = []
 
             tasks.append(task)
 
