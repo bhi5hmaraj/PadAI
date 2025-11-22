@@ -26,9 +26,10 @@ Then you **resolve it**. Update the theory. Test again.
 
 ## Active Confusions
 
-### 🔴 CONFUSION #1: What exactly is "mass"?
+### 🟢 CONFUSION #1: What exactly is "mass"? [RESOLVED]
 
 **Date raised**: 2025-11-22
+**Date resolved**: 2025-11-22
 **Raised by**: Implementation of kinetic energy formula
 
 **The problem**:
@@ -40,29 +41,33 @@ T = ½ Σ_i m_i (Δbad_i)²
 
 But **what is m_i**?
 
-**Possibilities**:
-1. m_i = demand[i] (nodes with high business demand have more "inertia")
-2. m_i = 1 / health[i] (unhealthy nodes are "heavier", harder to change)
-3. m_i = complexity[i] (complex nodes have more mass)
-4. m_i = LOC[i] / LOC_max (literal code mass)
-5. m_i = const = 1 (all nodes equal mass)
+**Resolution: m_i = 1 (uniform mass for MVP)**
 
-**Why it matters**:
-- Affects T magnitude
-- Changes which nodes dominate kinetic energy
-- Impacts H = T + V balance
+**Justification**:
+1. **Simplicity**: Start with simplest model (Occam's razor)
+2. **Physical analog**: In spring networks, all masses equal unless specified
+3. **Testable**: Can compare uniform vs. weighted mass later
+4. **MVP goal**: Validate Laplacian predictions first, optimize mass later
 
-**Experiments affected**: All (T appears in every experiment)
+**Formula for MVP**:
+```python
+T = 0.5 * np.sum((bad - bad_prev)**2)
+# Equivalent to: m_i = 1 for all i
+```
 
-**Resolution needed**: Pick one definition, justify it, test sensitivity.
+**Post-MVP refinement**:
+- If T too small/large, try m_i = demand[i] (business-weighted)
+- Sensitivity analysis: vary mass, measure impact on predictions
+- Document in `06-future-directions.md` as research question
 
-**Status**: 🔴 UNRESOLVED
+**Status**: 🟢 RESOLVED (MVP: uniform mass)
 
 ---
 
-### 🔴 CONFUSION #2: How to compute "risk" field?
+### 🟢 CONFUSION #2: How to compute "risk" field? [RESOLVED]
 
 **Date raised**: 2025-11-22
+**Date resolved**: 2025-11-22
 **Raised by**: SimulationState initialization
 
 **The problem**:
@@ -70,30 +75,43 @@ But **what is m_i**?
 We have three primitive fields: health, complexity, demand.
 We have one **derived** field: badness = f(health, complexity, risk).
 
-But `risk` appears in the badness formula:
+But `risk` appears in the badness formula - circular dependency?
+
+**Resolution: risk is DERIVED, not primitive**
+
+**Formula**:
 ```python
-bad[i] = α(1 - health[i]) + β·complexity[i] + γ·risk[i]
+risk[i] = complexity[i] * (1 - health[i])
 ```
 
-**How do we compute risk[i]**?
+**Justification**:
+1. **Physical meaning**: Risk = "danger of failure" = complexity when unhealthy
+2. **No circularity**: risk computed from health & complexity, THEN used in badness
+3. **Intuitive**: High complexity + low health = high risk
+4. **Measurable**: Both inputs are primitive fields
 
-**Possibilities**:
-1. risk = complexity × (1 - health) (interaction term)
-2. risk = coupling × (1 - health) (structural vulnerability)
-3. risk = incident_history[i] (learned from past failures)
-4. risk = const (just a placeholder, set to 0.3 for all nodes)
-5. risk is **primitive**, not derived (initialize it, update it via events)
+**Computation order** (breaks circularity):
+```python
+# Step 1: Update primitive fields (health, complexity, demand)
+state.health[i] = ...  # From events
+state.complexity[i] = ...
 
-**Why it matters**:
-- Circular dependency if risk depends on badness, which depends on risk
-- Affects gradient computations
-- Changes actor decisions (flow field depends on badness)
+# Step 2: Compute derived risk
+state.risk[i] = state.complexity[i] * (1 - state.health[i])
 
-**Experiments affected**: All
+# Step 3: Compute badness using risk
+state.bad[i] = α*(1 - state.health[i]) + β*state.complexity[i] + γ*state.risk[i]
+```
 
-**Current workaround**: MVP docs use Option 5 (risk is primitive), but unclear what events modify it.
+**Simplified badness** (expand risk):
+```python
+bad[i] = α*(1 - health[i]) + β*complexity[i] + γ*complexity[i]*(1 - health[i])
+       = α*(1 - health[i]) + (β + γ*(1 - health[i]))*complexity[i]
+```
 
-**Status**: 🔴 UNRESOLVED
+**For MVP**, use γ = 0.3 (risk contributes 30% weight).
+
+**Status**: 🟢 RESOLVED (risk = complexity × (1 - health))
 
 ---
 
@@ -126,28 +144,53 @@ Edge weight w_ij means "coupling strength." But does that mean:
 
 ---
 
-### 🔴 CONFUSION #4: Incident probability function
+### 🟢 CONFUSION #4: Incident probability function [RESOLVED]
 
 **Date raised**: 2025-11-22
+**Date resolved**: 2025-11-22
 **Raised by**: Scenario expected outcomes
 
 **The problem**:
 
 We say "incidents occur when health is low and complexity is high," but **what's the exact formula**?
 
-**Options**:
-1. p_incident[i] = (1 - health[i]) × complexity[i] (multiplicative)
-2. p_incident[i] = sigmoid(bad[i] - threshold) (logistic)
-3. p_incident[i] = bad[i]^k / Z (power law with partition function)
-4. p_incident[i] = 0 if health > 0.6, else 0.1 (step function)
+**Resolution: Sigmoid with badness threshold**
 
-**Why it matters**:
-- Can't validate "E_local predicts incidents" without defining incidents precisely
-- Affects calibration (too many/too few incidents changes signal-to-noise)
+**Formula**:
+```python
+def incident_probability(bad_i, threshold=0.6, steepness=10):
+    """
+    Smooth transition from 0 to max_prob as badness crosses threshold.
 
-**Experiments affected**: Exp02 (core validation)
+    threshold: badness value where p = max_prob/2 (default 0.6)
+    steepness: how sharp the transition (default 10)
+    max_prob: maximum incident probability per step (default 0.05)
+    """
+    from scipy.special import expit  # Logistic sigmoid
+    return 0.05 * expit(steepness * (bad_i - threshold))
 
-**Status**: 🔴 UNRESOLVED
+# Usage per timestep
+for node in nodes:
+    p = incident_probability(bad[node])
+    if random.random() < p:
+        trigger_incident(node)
+```
+
+**Justification**:
+1. **Smooth**: No discontinuities (more realistic than step function)
+2. **Tunable**: threshold and steepness control calibration
+3. **Physical**: Sigmoid common in failure probability models
+4. **Testable**: Can vary threshold to get desired incident rate
+
+**Calibration for MVP**:
+- threshold = 0.6 (incidents unlikely below this badness)
+- steepness = 10 (fairly sharp transition)
+- max_prob = 0.05 (5% per step when very bad)
+- **Expected**: ~2-5 incidents per 100 steps in baseline
+
+**If too many/few incidents**: Adjust threshold or max_prob.
+
+**Status**: 🟢 RESOLVED (sigmoid with bad threshold)
 
 ---
 
