@@ -90,6 +90,22 @@ Markets vs central planning:
 - Governance via economic incentives (not top-down rules)
 - Experimental validation (market vs planning at scale)
 
+### evals/
+**Evaluation Framework for Comparing Mental Models**
+
+Comprehensive framework for empirical comparison:
+- **01-evaluation-dimensions.md**: Eight dimensions for spider graphs (Predictive Power, Actionability, Simplicity, Scalability, Measurability, Generality, Learning Curve, Computational Cost)
+- **02-benchmark-scenarios.md**: Eight standard test cases (incident prediction, resource allocation, technical debt, scaling, alignment, etc.)
+- **03-scoring-rubrics.md**: Quantitative and qualitative criteria for scoring models
+- **04-model-comparison.md**: Actual scores for Physics (7.0), Economics (8.3), System Dynamics (6.3)
+- **05-decision-guide.md**: Decision tree and flowchart for selecting right model for problem
+
+Results:
+- Economics wins for: resource allocation, scalability, simplicity
+- Physics wins for: incident prediction, structural analysis
+- System Dynamics wins for: cross-scale feedback, long-term planning
+- Multi-model integration: 42% improvement for complex problems
+
 ---
 
 ## Key Insight: Model Pluralism
@@ -160,15 +176,29 @@ Different aspects of governance may require different models:
 
 ## Status
 
+### Mental Models
+
 | Model | Theory Docs | Simulator | Experiments | Validation |
 |-------|-------------|-----------|-------------|------------|
 | Physics | ✓ (01-06, learning/) | ✓ (MVP complete) | ⊙ (Exp01 passed) | ⊙ (baseline validated) |
 | Economics | ✓ (06-economics-and-markets) | ☐ | ☐ (design pending) | ☐ |
-| Business/Socio-technical | ✓ (business/) | ☐ | ⊙ (6 experiments designed) | ☐ |
+| System Dynamics | ✓ (business/) | ☐ | ⊙ (6 experiments designed) | ☐ |
 | Ecology | ⊙ (brief sketch in catalog) | ☐ | ☐ | ☐ |
-| Cognitive | ⊙ (brief sketch in catalog) | ☐ | ☐ | ☐ |
+| Cognitive | ⊙ (brief sketch in catalog, business/04) | ☐ | ☐ | ☐ |
 | CAS | ⊙ (brief sketch in catalog) | ☐ | ☐ | ☐ |
 | Organism | ⊙ (brief sketch in catalog) | ☐ | ☐ | ☐ |
+
+### Meta-Framework Components
+
+| Component | Status | Description |
+|-----------|--------|-------------|
+| Core problem definition | ✓ | 01-core-problem.md |
+| Model catalog | ✓ | 02-model-catalog.md |
+| Evaluation framework | ✓ | 03-evaluation-framework.md |
+| Model selection guide | ✓ | 04-model-selection.md |
+| Experiments as tests | ✓ | 05-experiments-as-tests.md |
+| Economics & markets | ✓ | 06-economics-and-markets.md |
+| **Evaluation benchmarks** | **✓** | **evals/ (complete framework)** |
 
 Legend: ✓ = Complete, ⊙ = In progress, ☐ = Not started
 
