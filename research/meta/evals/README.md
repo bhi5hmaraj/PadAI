@@ -111,6 +111,46 @@ Includes:
 - Multi-model scenarios (when to combine)
 - Red flags (when a model is failing)
 
+### 06-mathematical-framework.md
+**Rigorous Mathematical Formalization**
+
+Complete mathematical foundations using MathJax/LaTeX notation:
+- Formal definitions of all 8 evaluation dimensions
+- Scoring functions: $d_k(M) : \mathcal{M} \to [0, 10]$
+- Statistical comparison methods (hypothesis testing, Bayesian)
+- Multi-model integration (ensemble, sequential, hierarchical)
+- Uncertainty quantification (aleatory + epistemic)
+- Decision theory (utility functions, risk-adjustment, multi-armed bandit)
+- Information theory (MDL, mutual information)
+- Validation metrics (cross-validation, calibration, PAC bounds)
+
+Includes:
+- $\text{AUC-ROC}$ for predictive power
+- Cohen's $d$ for actionability
+- Pareto optimality: $M_i \succ M_j$
+- Ensemble optimal weights: $\mathbf{w}^* = \frac{\mathbf{\Sigma}^{-1} \mathbf{1}}{\mathbf{1}^T \mathbf{\Sigma}^{-1} \mathbf{1}}$
+- Sample complexity: $n \geq O(1/\epsilon^2 \log(1/\delta))$
+
+### 07-complete-model-scores.md
+**All Seven Models Scored and Compared**
+
+Comprehensive scoring of all models from catalog:
+1. **Physics** (7.0 avg) - Strong predictive power, structural analysis
+2. **Economics** (8.3 avg) - **Best overall**, actionability + scalability
+3. **System Dynamics** (6.3 avg) - General, feedback loops
+4. **Ecology** (6.6 avg) - Agent interactions, competition
+5. **Cognitive** (6.5 avg) - Human factors, understanding
+6. **CAS** (6.1 avg) - Emergence, power laws (abstract)
+7. **Organism** (6.5 avg) - Resilience, intuitive metaphors
+
+Includes:
+- Detailed dimension-by-dimension analysis for each model
+- Pareto frontier analysis (simplicity vs predictive power)
+- Statistical significance testing (pairwise comparisons)
+- Extended decision tree for all 7 models
+- Multi-model combinations (11% improvement)
+- Best model by problem type table
+
 ---
 
 ## Evaluation Process
